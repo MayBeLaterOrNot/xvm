@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<Type Name="xvm::scalar_swizzle&lt;0&gt;">
+		<DisplayString Optional="true">{{ {fp32[0]} }}</DisplayString>
+	</Type>
+	<Type Name="xvm::scalar_swizzle&lt;1&gt;">
+		<DisplayString Optional="true">{{ {fp32[1]} }}</DisplayString>
+	</Type>
+	<Type Name="xvm::scalar_swizzle&lt;2&gt;">
+		<DisplayString Optional="true">{{ {fp32[2]} }}</DisplayString>
+	</Type>
+	<Type Name="xvm::scalar_swizzle&lt;3&gt;">
+		<DisplayString Optional="true">{{ {fp32[3]} }}</DisplayString>
+	</Type>
+
+	<Type Name="xvm::float2;">
+		<DisplayString Optional="true">float2 {{ {x.fp32[0]}, {y.fp32[1]} }}</DisplayString>
+	</Type>
+
+	<Type Name="xvm::float3;">
+		<DisplayString Optional="true">float3 {{ {x.fp32[0]}, {y.fp32[1]}, {z.fp32[2]} }}</DisplayString>
+	</Type>
+
+	<Type Name="xvm::float4;">
+		<DisplayString Optional="true">float4 {{ {x.fp32[0]}, {y.fp32[1]}, {z.fp32[2]}, {w.fp32[3]} }}</DisplayString>
+	</Type>
+
+</AutoVisualizer>

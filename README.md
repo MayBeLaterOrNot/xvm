@@ -1,2 +1,2 @@
-# xvm
+# XVMath
 SIMD Math library
