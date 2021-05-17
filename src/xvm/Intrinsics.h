@@ -78,4 +78,37 @@ namespace xvm
 			scalar_swizzle<3> w;
 		};
 	};
+
+	float2 INTRINSICS_CALLCONV operator-(float2 v);
+	float3 INTRINSICS_CALLCONV operator-(float3 v);
+	float4 INTRINSICS_CALLCONV operator-(float4 v);
 }
+
+namespace xvm
+{
+#ifndef XVM_GLOBALCONST
+#define XVM_GLOBALCONST extern const __declspec(selectany)
+#endif
+
+	union FP32
+	{
+		uint32_t u;
+		float f;
+		struct
+		{
+			uint32_t Mantissa : 23;
+			uint32_t Exponent : 8;
+			uint32_t Sign : 1;
+		};
+	};
+
+	extern constexpr FP32 ABS_MASK = { 0x7fffffff };
+	extern constexpr FP32 NEGATIVE_MASK = { 0x80000000 };
+
+	XVM_GLOBALCONST __m128 XVM_ABS_MASK = _mm_set1_ps(ABS_MASK.f);
+	XVM_GLOBALCONST __m128 XMV_NEGATIVE_MASK = _mm_set1_ps(NEGATIVE_MASK.f);
+
+#undef XVM_GLOBALCONST
+}
+
+#include "Intrinsics.inl"

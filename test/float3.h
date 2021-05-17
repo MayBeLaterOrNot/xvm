@@ -36,3 +36,13 @@ TEST(float3, ctor_array)
 	EXPECT_FLOAT_EQ(v.y, 2.0f);
 	EXPECT_FLOAT_EQ(v.z, 3.0f);
 }
+
+TEST(float3, negation)
+{
+	float3 v(1.0f, 2.0f, 3.0f);
+	v = -v;
+
+	EXPECT_FLOAT_EQ(v.x, -1.0f);
+	EXPECT_FLOAT_EQ(v.y, -2.0f);
+	EXPECT_FLOAT_EQ(v.z, -3.0f);
+}
