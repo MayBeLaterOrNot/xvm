@@ -101,3 +101,15 @@ TEST(float2, intrinsics_dot)
 	EXPECT_NEAR(result.x, 0.5f, g_FloatEpsilon);
 	EXPECT_NEAR(result.y, 0.5f, g_FloatEpsilon);
 }
+
+TEST(float2, intrinsics_isnan)
+{
+	float2 v1(XVMNaNQ);
+	float2 v2(XVMInfinity);
+
+	bool result1 = isnan(v1);
+	bool result2 = isnan(v2);
+
+	EXPECT_TRUE(result1);
+	EXPECT_FALSE(result2);
+}

@@ -5,17 +5,17 @@ namespace xvm
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator-(float2 v)
 	{
 		//return _mm_sub_ps(_mm_setzero_ps(), v.vec);
-		return _mm_xor_ps(v.vec, XMV_NEGATIVE_MASK);
+		return _mm_xor_ps(v.vec, XVMMaskNegative);
 	}
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator-(float3 v)
 	{
 		//return _mm_sub_ps(_mm_setzero_ps(), v.vec);
-		return _mm_xor_ps(v.vec, XMV_NEGATIVE_MASK);
+		return _mm_xor_ps(v.vec, XVMMaskNegative);
 	}
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV operator-(float4 v)
 	{
 		//return _mm_sub_ps(_mm_setzero_ps(), v.vec);
-		return _mm_xor_ps(v.vec, XMV_NEGATIVE_MASK);
+		return _mm_xor_ps(v.vec, XVMMaskNegative);
 	}
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }
@@ -53,17 +53,17 @@ namespace xvm
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV abs(float2 v)
 	{
 		// & the sign bit
-		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+		return _mm_and_ps(XVMMaskAbsoluteValue, v.vec);
 	}
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV abs(float3 v)
 	{
 		// & the sign bit
-		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+		return _mm_and_ps(XVMMaskAbsoluteValue, v.vec);
 	}
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV abs(float4 v)
 	{
 		// & the sign bit
-		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+		return _mm_and_ps(XVMMaskAbsoluteValue, v.vec);
 	}
 
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2)
@@ -118,5 +118,30 @@ namespace xvm
 		shuff = _mm_movehl_ps(shuff, dot); // [fp0, fp1, fp2, fp3] = { dot.fp2, dot.fp3, shuff.fp2, shuff.fp3 }
 		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y+z+w, dot.fp1, dot.fp2, dot.fp3 }
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
+	}
+
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float2 v)
+	{
+		// compare against ourselves
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		int mask = _mm_movemask_ps(dst) & 0x00000003;
+		// If x or y are NaN, the mask is non-zero
+		return mask != 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float3 v)
+	{
+		// compare against ourselves
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		int mask = _mm_movemask_ps(dst) & 0x00000007;
+		// If x or y or z are NaN, the mask is non-zero
+		return mask != 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float4 v)
+	{
+		// compare against ourselves
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+		// If x or y or z or w are NaN, the mask is non-zero
+		return mask != 0;
 	}
 }

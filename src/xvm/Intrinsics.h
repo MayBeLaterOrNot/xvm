@@ -135,6 +135,10 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV dot(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2);
+
+	bool INTRINSICS_CALLCONV isnan(float2 v);
+	bool INTRINSICS_CALLCONV isnan(float3 v);
+	bool INTRINSICS_CALLCONV isnan(float4 v);
 }
 
 namespace xvm
@@ -143,23 +147,52 @@ namespace xvm
 #define XVM_GLOBALCONST extern const __declspec(selectany)
 #endif
 
-	union FP32
+	__declspec(align(16)) struct XVM_FP32
 	{
-		uint32_t u;
-		float f;
-		struct
+		union
 		{
-			uint32_t Mantissa : 23;
-			uint32_t Exponent : 8;
-			uint32_t Sign : 1;
+			float fp32[4];
+			__m128 v;
 		};
+
+		inline operator __m128() const noexcept { return v; }
+		inline operator const float* () const noexcept { return fp32; }
+		inline operator __m128i() const noexcept { return _mm_castps_si128(v); }
+		inline operator __m128d() const noexcept { return _mm_castps_pd(v); }
 	};
 
-	extern constexpr FP32 ABS_MASK = { 0x7fffffff };
-	extern constexpr FP32 NEGATIVE_MASK = { 0x80000000 };
+	__declspec(align(16)) struct XVM_I32
+	{
+		union
+		{
+			int32_t i32[4];
+			__m128 v;
+		};
 
-	XVM_GLOBALCONST __m128 XVM_ABS_MASK = _mm_set1_ps(ABS_MASK.f);
-	XVM_GLOBALCONST __m128 XMV_NEGATIVE_MASK = _mm_set1_ps(NEGATIVE_MASK.f);
+		inline operator __m128() const { return v; }
+		inline operator __m128i() const { return _mm_castps_si128(v); }
+		inline operator __m128d() const { return _mm_castps_pd(v); }
+	};
+
+	__declspec(align(16)) struct XVM_UI32
+	{
+		union
+		{
+			uint32_t i32[4];
+			__m128 v;
+		};
+
+		inline operator __m128() const { return v; }
+		inline operator __m128i() const { return _mm_castps_si128(v); }
+		inline operator __m128d() const { return _mm_castps_pd(v); }
+	};
+
+	XVM_GLOBALCONST XVM_I32		XVMMaskAbsoluteValue	= { { { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff } } };
+	XVM_GLOBALCONST XVM_UI32	XVMMaskNegative			= { { { 0x80000000, 0x80000000, 0x80000000, 0x80000000 } } };
+	XVM_GLOBALCONST XVM_UI32	XVMInfinity				= { { { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 } } };
+	XVM_GLOBALCONST XVM_UI32	XVMNegativeInfinity		= { { { 0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000 } } };
+	XVM_GLOBALCONST XVM_I32		XVMNaNS					= { { { 0x7F800001, 0x7F800001, 0x7F800001, 0x7F800001 } } };
+	XVM_GLOBALCONST XVM_I32		XVMNaNQ					= { { { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 } } };
 
 #undef XVM_GLOBALCONST
 }
