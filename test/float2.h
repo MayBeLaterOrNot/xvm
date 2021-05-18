@@ -90,3 +90,14 @@ TEST(float2, intrinsics_abs)
 	EXPECT_FLOAT_EQ(result.x, 0.1f);
 	EXPECT_FLOAT_EQ(result.y, 0.2f);
 }
+
+TEST(float2, intrinsics_dot)
+{
+	float2 v1(1.0f, 2.0f);
+	float2 v2(0.1f, 0.2f);
+
+	float2 result = dot(v1, v2);
+
+	EXPECT_NEAR(result.x, 0.5f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 0.5f, g_FloatEpsilon);
+}

@@ -93,4 +93,30 @@ namespace xvm
 		__m128 cross = _mm_sub_ps(_mm_mul_ps(v1.vec, v2_yzx), _mm_mul_ps(v1_yzx, v2.vec));
 		return INTRINSICS_SHUFFLE_PS(cross, _MM_SHUFFLE(3, 0, 2, 1));
 	}
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV dot(float2 v1, float2 v2)
+	{
+		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(3, 1, 2, 1)); // [fp0, fp1, fp2, fp3] = { y, z, y, w }
+		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, dot.fp1, dot.fp2, dot.fp3 }
+		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2)
+	{
+		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(3, 1, 2, 1)); // [fp0, fp1, fp2, fp3] = { y, z, y, w }
+		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, dot.fp1, dot.fp2, dot.fp3 }
+		shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 2)); // [fp0, fp1, fp2, fp3] = { z, z, z, z }
+		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y+z, dot.fp1, dot.fp2, dot.fp3 }
+		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2)
+	{
+		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 3, 0, 1)); // [fp0, fp1, fp2, fp3] = { y, x, w, z }
+		dot = _mm_add_ps(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, y+x, z+w, w+z }
+		shuff = _mm_movehl_ps(shuff, dot); // [fp0, fp1, fp2, fp3] = { dot.fp2, dot.fp3, shuff.fp2, shuff.fp3 }
+		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y+z+w, dot.fp1, dot.fp2, dot.fp3 }
+		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
+	}
 }

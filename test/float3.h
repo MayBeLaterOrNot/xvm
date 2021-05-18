@@ -112,3 +112,15 @@ TEST(float3, intrinsics_cross)
 	EXPECT_NEAR(result.y, -12.6f, g_FloatEpsilon);
 	EXPECT_NEAR(result.z, 4.52f, g_FloatEpsilon);
 }
+
+TEST(float3, intrinsics_dot)
+{
+	float3 v1(1.0f, 2.0f, 3.0f);
+	float3 v2(0.1f, 0.2f, 0.3f);
+
+	float3 result = dot(v1, v2);
+
+	EXPECT_NEAR(result.x, 1.4f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 1.4f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 1.4f, g_FloatEpsilon);
+}

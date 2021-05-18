@@ -110,3 +110,16 @@ TEST(float4, intrinsics_abs)
 	EXPECT_FLOAT_EQ(result.z, 0.3f);
 	EXPECT_FLOAT_EQ(result.w, 0.4f);
 }
+
+TEST(float4, intrinsics_dot)
+{
+	float4 v1(1.0f, 2.0f, 3.0f, 4.0f);
+	float4 v2(0.1f, 0.2f, 0.3f, 0.4f);
+
+	float4 result = dot(v1, v2);
+
+	EXPECT_NEAR(result.x, 3.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 3.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 3.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.w, 3.0f, g_FloatEpsilon);
+}
