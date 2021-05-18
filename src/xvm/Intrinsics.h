@@ -79,9 +79,48 @@ namespace xvm
 		};
 	};
 
+	// Negate operator
 	float2 INTRINSICS_CALLCONV operator-(float2 v);
 	float3 INTRINSICS_CALLCONV operator-(float3 v);
 	float4 INTRINSICS_CALLCONV operator-(float4 v);
+
+	// Arithmetic operators
+	float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2);
+	float3 INTRINSICS_CALLCONV operator+(float3 v1, float3 v2);
+	float4 INTRINSICS_CALLCONV operator+(float4 v1, float4 v2);
+
+	float2 INTRINSICS_CALLCONV operator-(float2 v1, float2 v2);
+	float3 INTRINSICS_CALLCONV operator-(float3 v1, float3 v2);
+	float4 INTRINSICS_CALLCONV operator-(float4 v1, float4 v2);
+
+	float2 INTRINSICS_CALLCONV operator*(float2 v1, float2 v2);
+	float3 INTRINSICS_CALLCONV operator*(float3 v1, float3 v2);
+	float4 INTRINSICS_CALLCONV operator*(float4 v1, float4 v2);
+
+	float2 INTRINSICS_CALLCONV operator/(float2 v1, float2 v2);
+	float3 INTRINSICS_CALLCONV operator/(float3 v1, float3 v2);
+	float4 INTRINSICS_CALLCONV operator/(float4 v1, float4 v2);
+
+	// Using these function may cause code bloat on different compilers
+	// because the quad-word (128-bit) fits nicely inside one SIMD register.
+	// And one of the key factors of a vector library is to keep the data inside these registers as much as possible.
+	// By doing that, you avoid unnecessary loads and stores operations from SIMD registers to memory or FPU registers.
+	// When combining multiple vector operations the "returned by value" interface allows the compiler to optimize these loads and stores easily by minimizing SIMD to FPU or memory transfers.
+	float2& INTRINSICS_CALLCONV operator+=(float2& v1, float2 v2);
+	float3& INTRINSICS_CALLCONV operator+=(float3& v1, float3 v2);
+	float4& INTRINSICS_CALLCONV operator+=(float4& v1, float4 v2);
+
+	float2& INTRINSICS_CALLCONV operator-=(float2& v1, float2 v2);
+	float3& INTRINSICS_CALLCONV operator-=(float3& v1, float3 v2);
+	float4& INTRINSICS_CALLCONV operator-=(float4& v1, float4 v2);
+
+	float2& INTRINSICS_CALLCONV operator*=(float2& v1, float2 v2);
+	float3& INTRINSICS_CALLCONV operator*=(float3& v1, float3 v2);
+	float4& INTRINSICS_CALLCONV operator*=(float4& v1, float4 v2);
+
+	float2& INTRINSICS_CALLCONV operator/=(float2& v1, float2 v2);
+	float3& INTRINSICS_CALLCONV operator/=(float3& v1, float3 v2);
+	float4& INTRINSICS_CALLCONV operator/=(float4& v1, float4 v2);
 }
 
 namespace xvm
@@ -112,3 +151,7 @@ namespace xvm
 }
 
 #include "Intrinsics.inl"
+
+#undef INTRINSICS_SHUFFLE_PS
+#undef INTRINSICS_CALLCONV
+#undef INTRINSICS_INLINE
