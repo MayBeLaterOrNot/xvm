@@ -90,16 +90,14 @@ TEST(float4, arithmetic_multiply)
 
 TEST(float4, arithmetic_divide)
 {
-	constexpr float episilon = 1e-2f;
-
 	float4 v1(0.1f, 0.2f, 0.3f, 0.4f);
 	float4 v2(0.3f);
 	float4 result = v1 / v2;
 
-	EXPECT_NEAR(result.x, 0.33f, episilon);
-	EXPECT_NEAR(result.y, 0.66f, episilon);
-	EXPECT_NEAR(result.z, 1.0f, episilon);
-	EXPECT_NEAR(result.w, 1.33f, episilon);
+	EXPECT_NEAR(result.x, 0.33f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 0.66f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.w, 1.33f, g_FloatEpsilon);
 }
 
 TEST(float4, intrinsics_abs)

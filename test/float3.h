@@ -82,15 +82,13 @@ TEST(float3, arithmetic_multiply)
 
 TEST(float3, arithmetic_divide)
 {
-	constexpr float episilon = 1e-2f;
-
 	float3 v1(0.1f, 0.2f, 0.3f);
 	float3 v2(0.3f);
 	float3 result = v1 / v2;
 
-	EXPECT_NEAR(result.x, 0.33f, episilon);
-	EXPECT_NEAR(result.y, 0.66f, episilon);
-	EXPECT_NEAR(result.z, 1.0f, episilon);
+	EXPECT_NEAR(result.x, 0.33f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 0.66f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 1.0f, g_FloatEpsilon);
 }
 
 TEST(float3, intrinsics_abs)
@@ -101,4 +99,16 @@ TEST(float3, intrinsics_abs)
 	EXPECT_FLOAT_EQ(result.x, 0.1f);
 	EXPECT_FLOAT_EQ(result.y, 0.2f);
 	EXPECT_FLOAT_EQ(result.z, 0.3f);
+}
+
+TEST(float3, intrinsics_cross)
+{
+	float3 v1 = { 5.2f, 3.4f, 2.0f };
+	float3 v2 = { 0.2f, 1.0f, 2.5f };
+
+	float3 result = cross(v1, v2);
+
+	EXPECT_NEAR(result.x, 6.5f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, -12.6f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 4.52f, g_FloatEpsilon);
 }

@@ -126,6 +126,8 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV abs(float2 v);
 	float3 INTRINSICS_CALLCONV abs(float3 v);
 	float4 INTRINSICS_CALLCONV abs(float4 v);
+
+	float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2);
 }
 
 namespace xvm
