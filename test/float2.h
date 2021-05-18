@@ -83,3 +83,12 @@ TEST(float2, arithmetic_divide)
 	EXPECT_NEAR(result.x, 0.33f, episilon);
 	EXPECT_NEAR(result.y, 0.66f, episilon);
 }
+
+TEST(float2, intrinsics_abs)
+{
+	float2 v1(-0.1f, -0.2f);
+	float2 result = abs(v1);
+
+	EXPECT_FLOAT_EQ(result.x, 0.1f);
+	EXPECT_FLOAT_EQ(result.y, 0.2f);
+}

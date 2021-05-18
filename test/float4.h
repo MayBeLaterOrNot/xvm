@@ -101,3 +101,14 @@ TEST(float4, arithmetic_divide)
 	EXPECT_NEAR(result.z, 1.0f, episilon);
 	EXPECT_NEAR(result.w, 1.33f, episilon);
 }
+
+TEST(float4, intrinsics_abs)
+{
+	float4 v1(-0.1f, -0.2f, -0.3f, -0.4f);
+	float4 result = abs(v1);
+
+	EXPECT_FLOAT_EQ(result.x, 0.1f);
+	EXPECT_FLOAT_EQ(result.y, 0.2f);
+	EXPECT_FLOAT_EQ(result.z, 0.3f);
+	EXPECT_FLOAT_EQ(result.w, 0.4f);
+}

@@ -49,4 +49,20 @@ namespace xvm
 	INTRINSICS_INLINE float2& INTRINSICS_CALLCONV operator/=(float2& v1, float2 v2) { v1 = v1 / v2; return v1; }
 	INTRINSICS_INLINE float3& INTRINSICS_CALLCONV operator/=(float3& v1, float3 v2) { v1 = v1 / v2; return v1; }
 	INTRINSICS_INLINE float4& INTRINSICS_CALLCONV operator/=(float4& v1, float4 v2) { v1 = v1 / v2; return v1; }
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV abs(float2 v)
+	{
+		// & the sign bit
+		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV abs(float3 v)
+	{
+		// & the sign bit
+		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV abs(float4 v)
+	{
+		// & the sign bit
+		return _mm_and_ps(XVM_ABS_MASK, v.vec);
+	}
 }

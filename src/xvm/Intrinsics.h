@@ -121,6 +121,11 @@ namespace xvm
 	float2& INTRINSICS_CALLCONV operator/=(float2& v1, float2 v2);
 	float3& INTRINSICS_CALLCONV operator/=(float3& v1, float3 v2);
 	float4& INTRINSICS_CALLCONV operator/=(float4& v1, float4 v2);
+
+	// Intrinsics
+	float2 INTRINSICS_CALLCONV abs(float2 v);
+	float3 INTRINSICS_CALLCONV abs(float3 v);
+	float4 INTRINSICS_CALLCONV abs(float4 v);
 }
 
 namespace xvm
