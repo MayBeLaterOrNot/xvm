@@ -135,6 +135,10 @@ namespace xvm
 	float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2);
 
+	bool INTRINSICS_CALLCONV isinf(float2 v);
+	bool INTRINSICS_CALLCONV isinf(float3 v);
+	bool INTRINSICS_CALLCONV isinf(float4 v);
+
 	bool INTRINSICS_CALLCONV isnan(float2 v);
 	bool INTRINSICS_CALLCONV isnan(float3 v);
 	bool INTRINSICS_CALLCONV isnan(float4 v);
@@ -166,6 +170,18 @@ namespace xvm
 #ifndef XVM_GLOBALCONST
 #define XVM_GLOBALCONST extern const __declspec(selectany)
 #endif
+
+	union FP32
+	{
+		uint32_t u;
+		float f;
+		struct
+		{
+			uint32_t Mantissa : 23;
+			uint32_t Exponent : 8;
+			uint32_t Sign : 1;
+		};
+	};
 
 	__declspec(align(16)) struct XVM_FP32
 	{
@@ -206,6 +222,9 @@ namespace xvm
 		inline operator __m128i() const { return _mm_castps_si128(v); }
 		inline operator __m128d() const { return _mm_castps_pd(v); }
 	};
+
+	XVM_GLOBALCONST FP32		XVMFP32Infinity			= { 0x7F800000 };
+	XVM_GLOBALCONST FP32		XVMFP32NegativeInfinity = { 0xFF800000 };
 
 	XVM_GLOBALCONST XVM_I32		XVMMaskAbsoluteValue	= { { { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff } } };
 	XVM_GLOBALCONST XVM_UI32	XVMMaskNegative			= { { { 0x80000000, 0x80000000, 0x80000000, 0x80000000 } } };

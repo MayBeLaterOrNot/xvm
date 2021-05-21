@@ -124,6 +124,24 @@ TEST(float4, intrinsics_dot)
 	EXPECT_NEAR(result.w, 3.0f, g_FloatEpsilon);
 }
 
+TEST(float4, intrinsics_isinf)
+{
+	float4 v1(0.0f);
+	float4 v2(XVMInfinity);
+	float4 v3(XVMNegativeInfinity);
+	float4 v4(0.0f, 0.0f, 0.0f, XVMFP32Infinity.f);
+
+	bool result1 = isinf(v1);
+	bool result2 = isinf(v2);
+	bool result3 = isinf(v3);
+	bool result4 = isinf(v4);
+
+	EXPECT_FALSE(result1);
+	EXPECT_TRUE(result2);
+	EXPECT_TRUE(result3);
+	EXPECT_TRUE(result4);
+}
+
 TEST(float4, intrinsics_isnan)
 {
 	float4 v1(XVMNaNQ);

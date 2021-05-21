@@ -120,6 +120,34 @@ namespace xvm
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 	}
 
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float2 v)
+	{
+		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
+		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
+		__m128 dst = _mm_or_ps(p, n);
+		int mask = _mm_movemask_ps(dst) & 0x00000003;
+
+		return (mask != 0);
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float3 v)
+	{
+		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
+		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
+		__m128 dst = _mm_or_ps(p, n);
+		int mask = _mm_movemask_ps(dst) & 0x00000007;
+
+		return (mask != 0);
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float4 v)
+	{
+		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
+		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
+		__m128 dst = _mm_or_ps(p, n);
+		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+
+		return (mask != 0);
+	}
+
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float2 v)
 	{
 		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
