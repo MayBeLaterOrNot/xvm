@@ -147,3 +147,15 @@ TEST(float3, intrinsics_length)
 	EXPECT_NEAR(result.y, 3.741f, g_FloatEpsilon);
 	EXPECT_NEAR(result.z, 3.741f, g_FloatEpsilon);
 }
+
+TEST(float3, intrinsics_max)
+{
+	float3 v1(1.0f, 3.0f, 5.0f);
+	float3 v2(2.0f, 4.0f, 6.0f);
+
+	float3 result = max(v1, v2);
+
+	EXPECT_NEAR(result.x, 2.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 4.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 6.0f, g_FloatEpsilon);
+}
