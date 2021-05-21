@@ -97,51 +97,64 @@ namespace xvm
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV dot(float2 v1, float2 v2)
 	{
 		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
-		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(3, 1, 2, 1)); // [fp0, fp1, fp2, fp3] = { y, z, y, w }
-		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, dot.fp1, dot.fp2, dot.fp3 }
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(1, 1, 1, 1)); // { y, y, y, y }
+		dot = _mm_add_ss(dot, shuff); // { x+y, ?, ?, ? }
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 	}
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2)
 	{
 		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
-		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(3, 1, 2, 1)); // [fp0, fp1, fp2, fp3] = { y, z, y, w }
-		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, dot.fp1, dot.fp2, dot.fp3 }
-		shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 2)); // [fp0, fp1, fp2, fp3] = { z, z, z, z }
-		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y+z, dot.fp1, dot.fp2, dot.fp3 }
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 1)); // { y, z, z, z }
+		dot = _mm_add_ss(dot, shuff); // { x+y, ?, ?, ? }
+		shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 2)); // { z, z, z, z }
+		dot = _mm_add_ss(dot, shuff); // { x+y+z, ?, ?, ? }
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 	}
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2)
 	{
 		__m128 dot = _mm_mul_ps(v1.vec, v2.vec);
-		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 3, 0, 1)); // [fp0, fp1, fp2, fp3] = { y, x, w, z }
-		dot = _mm_add_ps(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y, y+x, z+w, w+z }
-		shuff = _mm_movehl_ps(shuff, dot); // [fp0, fp1, fp2, fp3] = { dot.fp2, dot.fp3, shuff.fp2, shuff.fp3 }
-		dot = _mm_add_ss(dot, shuff); // [fp0, fp1, fp2, fp3] = { x+y+z+w, dot.fp1, dot.fp2, dot.fp3 }
+		__m128 shuff = INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(2, 3, 0, 1)); // { y, x, w, z }
+		dot = _mm_add_ps(dot, shuff); // { x+y, y+x, z+w, w+z }
+		shuff = _mm_movehl_ps(shuff, dot); // { dot.fp2, dot.fp3, shuff.fp2, shuff.fp3 }
+		dot = _mm_add_ss(dot, shuff); // { x+y+z+w, ?, ?, ? }
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 	}
 
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float2 v)
 	{
-		// compare against ourselves
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
 		int mask = _mm_movemask_ps(dst) & 0x00000003;
 		// If x or y are NaN, the mask is non-zero
 		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float3 v)
 	{
-		// compare against ourselves
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
 		int mask = _mm_movemask_ps(dst) & 0x00000007;
 		// If x or y or z are NaN, the mask is non-zero
 		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float4 v)
 	{
-		// compare against ourselves
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
 		int mask = _mm_movemask_ps(dst) & 0x0000000F;
 		// If x or y or z or w are NaN, the mask is non-zero
 		return mask != 0;
+	}
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV length(float2 v)
+	{
+		float2 v2 = dot(v, v);
+		return _mm_sqrt_ps(v2.vec);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV length(float3 v)
+	{
+		float3 v2 = dot(v, v);
+		return _mm_sqrt_ps(v2.vec);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV length(float4 v)
+	{
+		float4 v2 = dot(v, v);
+		return _mm_sqrt_ps(v2.vec);
 	}
 }

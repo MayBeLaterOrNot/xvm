@@ -102,8 +102,8 @@ TEST(float4, arithmetic_divide)
 
 TEST(float4, intrinsics_abs)
 {
-	float4 v1(-0.1f, -0.2f, -0.3f, -0.4f);
-	float4 result = abs(v1);
+	float4 v(-0.1f, -0.2f, -0.3f, -0.4f);
+	float4 result = abs(v);
 
 	EXPECT_FLOAT_EQ(result.x, 0.1f);
 	EXPECT_FLOAT_EQ(result.y, 0.2f);
@@ -134,4 +134,16 @@ TEST(float4, intrinsics_isnan)
 
 	EXPECT_TRUE(result1);
 	EXPECT_FALSE(result2);
+}
+
+TEST(float4, intrinsics_length)
+{
+	float4 v(1.0f, 2.0f, 3.0f, 4.0f);
+
+	float4 result = length(v);
+
+	EXPECT_NEAR(result.x, 5.477f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 5.477f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 5.477f, g_FloatEpsilon);
+	EXPECT_NEAR(result.w, 5.477f, g_FloatEpsilon);
 }

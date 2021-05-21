@@ -130,8 +130,7 @@ namespace xvm
 	float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2);
 
 	// Dot product, (also known as scalar product) of 2 vectors u and v is defined as the sum of
-	// the product of their corresponding vector components
-	// Value of dot product is splatted across the sse registers
+	// the product of their corresponding vector components, value of dot product is splatted across the sse registers
 	float2 INTRINSICS_CALLCONV dot(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2);
@@ -139,6 +138,11 @@ namespace xvm
 	bool INTRINSICS_CALLCONV isnan(float2 v);
 	bool INTRINSICS_CALLCONV isnan(float3 v);
 	bool INTRINSICS_CALLCONV isnan(float4 v);
+
+	// Sqrt of sum of each component squared, value of length is splatted across the sse registers
+	float2 INTRINSICS_CALLCONV length(float2 v);
+	float3 INTRINSICS_CALLCONV length(float3 v);
+	float4 INTRINSICS_CALLCONV length(float4 v);
 }
 
 namespace xvm
