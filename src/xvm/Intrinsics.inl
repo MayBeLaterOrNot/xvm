@@ -199,4 +199,17 @@ namespace xvm
 		float4 l = length(v);
 		return _mm_div_ps(v.vec, l.vec);
 	}
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV sqrt(float2 v)
+	{
+		return _mm_sqrt_ps(v.vec);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV sqrt(float3 v)
+	{
+		return _mm_sqrt_ps(v.vec);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV sqrt(float4 v)
+	{
+		return _mm_sqrt_ps(v.vec);
+	}
 }

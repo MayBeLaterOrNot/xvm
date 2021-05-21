@@ -155,6 +155,10 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV normalize(float2 v);
 	float3 INTRINSICS_CALLCONV normalize(float3 v);
 	float4 INTRINSICS_CALLCONV normalize(float4 v);
+
+	float2 INTRINSICS_CALLCONV sqrt(float2 v);
+	float3 INTRINSICS_CALLCONV sqrt(float3 v);
+	float4 INTRINSICS_CALLCONV sqrt(float4 v);
 }
 
 namespace xvm

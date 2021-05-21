@@ -159,3 +159,13 @@ TEST(float2, intrinsics_normalize)
 	EXPECT_NEAR(len.x, 1.0f, g_FloatEpsilon);
 	EXPECT_NEAR(len.y, 1.0f, g_FloatEpsilon);
 }
+
+TEST(float2, intrinsics_sqrt)
+{
+	float2 v(1.0f, 2.0f);
+
+	float2 result = sqrt(v);
+
+	EXPECT_NEAR(result.x, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 1.414f, g_FloatEpsilon);
+}
