@@ -147,6 +147,10 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV max(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV max(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV max(float4 v1, float4 v2);
+
+	float2 INTRINSICS_CALLCONV min(float2 v1, float2 v2);
+	float3 INTRINSICS_CALLCONV min(float3 v1, float3 v2);
+	float4 INTRINSICS_CALLCONV min(float4 v1, float4 v2);
 }
 
 namespace xvm

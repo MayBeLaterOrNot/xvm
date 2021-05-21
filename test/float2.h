@@ -134,3 +134,14 @@ TEST(float2, intrinsics_max)
 	EXPECT_NEAR(result.x, 2.0f, g_FloatEpsilon);
 	EXPECT_NEAR(result.y, 4.0f, g_FloatEpsilon);
 }
+
+TEST(float2, intrinsics_min)
+{
+	float2 v1(1.0f, 3.0f);
+	float2 v2(2.0f, 4.0f);
+
+	float2 result = min(v1, v2);
+
+	EXPECT_NEAR(result.x, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 3.0f, g_FloatEpsilon);
+}

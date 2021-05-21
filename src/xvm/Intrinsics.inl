@@ -170,4 +170,17 @@ namespace xvm
 	{
 		return _mm_max_ps(v1.vec, v2.vec);
 	}
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV min(float2 v1, float2 v2)
+	{
+		return _mm_min_ps(v1.vec, v2.vec);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV min(float3 v1, float3 v2)
+	{
+		return _mm_min_ps(v1.vec, v2.vec);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV min(float4 v1, float4 v2)
+	{
+		return _mm_min_ps(v1.vec, v2.vec);
+	}
 }
