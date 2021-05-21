@@ -171,3 +171,19 @@ TEST(float3, intrinsics_min)
 	EXPECT_NEAR(result.y, 3.0f, g_FloatEpsilon);
 	EXPECT_NEAR(result.z, 5.0f, g_FloatEpsilon);
 }
+
+TEST(float3, intrinsics_normalize)
+{
+	float3 v(1.0f, 2.0f, 3.0f);
+
+	float3 result = normalize(v);
+	float3 len = length(result);
+
+	EXPECT_NEAR(result.x, 0.267f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 0.535f, g_FloatEpsilon);
+	EXPECT_NEAR(result.z, 0.802f, g_FloatEpsilon);
+
+	EXPECT_NEAR(len.x, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(len.y, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(len.z, 1.0f, g_FloatEpsilon);
+}

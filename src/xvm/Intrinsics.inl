@@ -183,4 +183,20 @@ namespace xvm
 	{
 		return _mm_min_ps(v1.vec, v2.vec);
 	}
+
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV normalize(float2 v)
+	{
+		float2 l = length(v);
+		return _mm_div_ps(v.vec, l.vec);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV normalize(float3 v)
+	{
+		float3 l = length(v);
+		return _mm_div_ps(v.vec, l.vec);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV normalize(float4 v)
+	{
+		float4 l = length(v);
+		return _mm_div_ps(v.vec, l.vec);
+	}
 }
