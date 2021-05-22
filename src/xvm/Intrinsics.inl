@@ -186,6 +186,28 @@ namespace xvm
 		return _mm_sqrt_ps(v2.vec);
 	}
 
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV lerp(float2 v1, float2 v2, float2 s)
+	{
+		// x + s(y-x)
+		__m128 sub = _mm_sub_ps(v2.vec, v1.vec);
+		__m128 mul = _mm_mul_ps(sub, s.vec);
+		return _mm_add_ps(v1.vec, mul);
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV lerp(float3 v1, float3 v2, float3 s)
+	{
+		// x + s(y-x)
+		__m128 sub = _mm_sub_ps(v2.vec, v1.vec);
+		__m128 mul = _mm_mul_ps(sub, s.vec);
+		return _mm_add_ps(v1.vec, mul);
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV lerp(float4 v1, float4 v2, float4 s)
+	{
+		// x + s(y-x)
+		__m128 sub = _mm_sub_ps(v2.vec, v1.vec);
+		__m128 mul = _mm_mul_ps(sub, s.vec);
+		return _mm_add_ps(v1.vec, mul);
+	}
+
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV max(float2 v1, float2 v2)
 	{
 		return _mm_max_ps(v1.vec, v2.vec);

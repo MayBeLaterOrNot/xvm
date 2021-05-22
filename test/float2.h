@@ -142,6 +142,17 @@ TEST(float2, intrinsics_length)
 	EXPECT_NEAR(result.y, 2.236f, g_FloatEpsilon);
 }
 
+TEST(float2, intrinsics_lerp)
+{
+	float2 v1(1.0f, 3.0f);
+	float2 v2(2.0f, 4.0f);
+
+	float2 result = lerp(v1, v2, 0.5f);
+
+	EXPECT_NEAR(result.x, 1.5f, g_FloatEpsilon);
+	EXPECT_NEAR(result.y, 3.5f, g_FloatEpsilon);
+}
+
 TEST(float2, intrinsics_max)
 {
 	float2 v1(1.0f, 3.0f);
