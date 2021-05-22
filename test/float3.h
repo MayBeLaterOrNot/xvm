@@ -101,6 +101,20 @@ TEST(float3, intrinsics_abs)
 	EXPECT_FLOAT_EQ(result.z, 0.3f);
 }
 
+TEST(float3, intrinsics_all)
+{
+	float3 v1(0.0f, 0.0f, 0.0f);
+	float3 v2(0.0f, 0.0f, 1.0f);
+	float3 v3(1.0f, 2.0f, 3.0f);
+	bool result1 = all(v1);
+	bool result2 = all(v2);
+	bool result3 = all(v3);
+
+	EXPECT_FALSE(result1);
+	EXPECT_FALSE(result2);
+	EXPECT_TRUE(result3);
+}
+
 TEST(float3, intrinsics_cross)
 {
 	float3 v1 = { 5.2f, 3.4f, 2.0f };

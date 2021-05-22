@@ -111,6 +111,20 @@ TEST(float4, intrinsics_abs)
 	EXPECT_FLOAT_EQ(result.w, 0.4f);
 }
 
+TEST(float4, intrinsics_all)
+{
+	float4 v1(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 v2(0.0f, 0.0f, 0.0f, 1.0f);
+	float4 v3(1.0f, 2.0f, 3.0f, 4.0f);
+	bool result1 = all(v1);
+	bool result2 = all(v2);
+	bool result3 = all(v3);
+
+	EXPECT_FALSE(result1);
+	EXPECT_FALSE(result2);
+	EXPECT_TRUE(result3);
+}
+
 TEST(float4, intrinsics_dot)
 {
 	float4 v1(1.0f, 2.0f, 3.0f, 4.0f);

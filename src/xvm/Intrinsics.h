@@ -127,6 +127,11 @@ namespace xvm
 	float3 INTRINSICS_CALLCONV abs(float3 v);
 	float4 INTRINSICS_CALLCONV abs(float4 v);
 
+	// Determines if all components of the specified value are non-zero.
+	bool INTRINSICS_CALLCONV all(float2 v);
+	bool INTRINSICS_CALLCONV all(float3 v);
+	bool INTRINSICS_CALLCONV all(float4 v);
+
 	float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2);
 
 	// Dot product, (also known as scalar product) of 2 vectors u and v is defined as the sum of

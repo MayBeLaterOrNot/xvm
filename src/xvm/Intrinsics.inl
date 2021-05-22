@@ -66,6 +66,28 @@ namespace xvm
 		return _mm_and_ps(XVMMaskAbsoluteValue, v.vec);
 	}
 
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float2 v)
+	{
+		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		int mask = _mm_movemask_ps(dst) & 0x00000003;
+
+		return mask == 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float3 v)
+	{
+		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		int mask = _mm_movemask_ps(dst) & 0x00000007;
+
+		return mask == 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float4 v)
+	{
+		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+
+		return mask == 0;
+	}
+
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2)
 	{
 		/*
