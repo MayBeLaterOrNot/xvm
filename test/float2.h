@@ -105,6 +105,20 @@ TEST(float2, intrinsics_all)
 	EXPECT_TRUE(result3);
 }
 
+TEST(float2, intrinsics_any)
+{
+	float2 v1(0.0f, 0.0f);
+	float2 v2(0.0f, 1.0f);
+	float2 v3(1.0f, 2.0f);
+	bool result1 = any(v1);
+	bool result2 = any(v2);
+	bool result3 = any(v3);
+
+	EXPECT_FALSE(result1);
+	EXPECT_TRUE(result2);
+	EXPECT_TRUE(result3);
+}
+
 TEST(float2, intrinsics_dot)
 {
 	float2 v1(1.0f, 2.0f);

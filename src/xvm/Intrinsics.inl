@@ -68,22 +68,53 @@ namespace xvm
 
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float2 v)
 	{
-		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If all is non-zero, the mask is exactly 0x00000003
 		int mask = _mm_movemask_ps(dst) & 0x00000003;
-
-		return mask == 0;
+		return mask == 0x00000003;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float3 v)
 	{
-		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If all is non-zero, the mask is exactly 0x00000007
 		int mask = _mm_movemask_ps(dst) & 0x00000007;
-
-		return mask == 0;
+		return mask == 0x00000007;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(float4 v)
 	{
-		__m128 dst = _mm_cmpeq_ps(v.vec, _mm_setzero_ps()); // v == 0
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If all is non-zero, the mask is exactly 0x0000000F
 		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+		return mask == 0x0000000F;
+	}
+
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(float2 v)
+	{
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If x or y are non-zero, the mask is non-zero
+		int mask = _mm_movemask_ps(dst) & 0x00000003;
+		return mask != 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(float3 v)
+	{
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If x or y or z are non-zero, the mask is non-zero
+		int mask = _mm_movemask_ps(dst) & 0x00000007;
+		return mask != 0;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(float4 v)
+	{
+		// v != 0
+		__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
+		// If x or y or z or w are non-zero, the mask is non-zero
+		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+		return mask != 0;
+	}
 
 		return mask == 0;
 	}

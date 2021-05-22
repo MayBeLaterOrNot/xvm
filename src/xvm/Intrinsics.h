@@ -132,6 +132,11 @@ namespace xvm
 	bool INTRINSICS_CALLCONV all(float3 v);
 	bool INTRINSICS_CALLCONV all(float4 v);
 
+	// Determines if any components of the specified value are non-zero.
+	bool INTRINSICS_CALLCONV any(float2 v);
+	bool INTRINSICS_CALLCONV any(float3 v);
+	bool INTRINSICS_CALLCONV any(float4 v);
+
 	float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2);
 
 	// Dot product, (also known as scalar product) of 2 vectors u and v is defined as the sum of
@@ -140,10 +145,12 @@ namespace xvm
 	float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2);
 
+	// Determines if the specified floating-point value is infinite.
 	bool INTRINSICS_CALLCONV isinf(float2 v);
 	bool INTRINSICS_CALLCONV isinf(float3 v);
 	bool INTRINSICS_CALLCONV isinf(float4 v);
 
+	// Determines if the specified floating-point value is nan.
 	bool INTRINSICS_CALLCONV isnan(float2 v);
 	bool INTRINSICS_CALLCONV isnan(float3 v);
 	bool INTRINSICS_CALLCONV isnan(float4 v);
