@@ -170,6 +170,24 @@ TEST(float3, intrinsics_dot)
 	EXPECT_NEAR(result.z, 1.4f, g_FloatEpsilon);
 }
 
+TEST(float3, intrinsics_isfinite)
+{
+	float3 v1(0.0f);
+	float3 v2(XVMInfinity);
+	float3 v3(XVMNegativeInfinity);
+	float3 v4(0.0f, 0.0f, XVMFP32Infinity.f);
+
+	bool result1 = isfinite(v1);
+	bool result2 = isfinite(v2);
+	bool result3 = isfinite(v3);
+	bool result4 = isfinite(v4);
+
+	EXPECT_TRUE(result1);
+	EXPECT_FALSE(result2);
+	EXPECT_FALSE(result3);
+	EXPECT_FALSE(result4);
+}
+
 TEST(float3, intrinsics_isinf)
 {
 	float3 v1(0.0f);

@@ -13,6 +13,8 @@
 // https://stackoverflow.com/questions/51641131/how-to-achieve-vector-swizzling-in-c
 // https://docs.microsoft.com/en-us/cpp/cpp/m128?view=msvc-160
 
+// TODO: implement trig functions
+
 namespace xvm
 {
 	// TODO: Add swizzling to float2,float3,float4
@@ -148,6 +150,11 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV dot(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV dot(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV dot(float4 v1, float4 v2);
+
+	// Determines if the specified floating-point value is finite.
+	bool INTRINSICS_CALLCONV isfinite(float2 v);
+	bool INTRINSICS_CALLCONV isfinite(float3 v);
+	bool INTRINSICS_CALLCONV isfinite(float4 v);
 
 	// Determines if the specified floating-point value is infinite.
 	bool INTRINSICS_CALLCONV isinf(float2 v);

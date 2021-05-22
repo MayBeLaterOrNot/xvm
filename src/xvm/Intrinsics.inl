@@ -189,53 +189,90 @@ namespace xvm
 		return INTRINSICS_SHUFFLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 	}
 
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(float2 v)
+	{
+		// Mask off the sign bit
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v != infinity
+		__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
+		// If x, y is finite, the mask is exactly 0x00000003
+		int mask = _mm_movemask_ps(cmp) & 0x00000003;
+		return mask == 0x00000003;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(float3 v)
+	{
+		// Mask off the sign bit
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v != infinity
+		__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
+		// If x, y, z is finite, the mask is exactly 0x00000007
+		int mask = _mm_movemask_ps(cmp) & 0x00000007;
+		return mask == 0x00000007;
+	}
+	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(float4 v)
+	{
+		// Mask off the sign bit
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v != infinity
+		__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
+		// If x, y, z, w is finite, the mask is exactly 0x0000000F
+		int mask = _mm_movemask_ps(cmp) & 0x0000000F;
+		return mask == 0x0000000F;
+	}
+
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float2 v)
 	{
-		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
-		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
-		__m128 dst = _mm_or_ps(p, n);
-		int mask = _mm_movemask_ps(dst) & 0x00000003;
-
-		return (mask != 0);
+		// Mask off the sign bit then compare to infinity
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v == infinity
+		__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
+		// If x or y is infinity, the mask is non-zero
+		int mask = _mm_movemask_ps(cmp) & 0x00000003;
+		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float3 v)
 	{
-		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
-		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
-		__m128 dst = _mm_or_ps(p, n);
-		int mask = _mm_movemask_ps(dst) & 0x00000007;
-
-		return (mask != 0);
+		// Mask off the sign bit then compare to infinity
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v == infinity
+		__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
+		// If x or y or z is infinity, the mask is non-zero
+		int mask = _mm_movemask_ps(cmp) & 0x00000007;
+		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(float4 v)
 	{
-		__m128 p = _mm_cmpeq_ps(v.vec, XVMInfinity);
-		__m128 n = _mm_cmpeq_ps(v.vec, XVMNegativeInfinity);
-		__m128 dst = _mm_or_ps(p, n);
-		int mask = _mm_movemask_ps(dst) & 0x0000000F;
-
-		return (mask != 0);
+		// Mask off the sign bit then compare to infinity
+		__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
+		// v == infinity
+		__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
+		// If x or y or z or w is infinity, the mask is non-zero
+		int mask = _mm_movemask_ps(cmp) & 0x0000000F;
+		return mask != 0;
 	}
 
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float2 v)
 	{
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
+		// v != v
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		// If x or y are nan, the mask is non-zero
 		int mask = _mm_movemask_ps(dst) & 0x00000003;
-		// If x or y are NaN, the mask is non-zero
 		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float3 v)
 	{
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
+		// v != v
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
+		// If x or y or z are nan, the mask is non-zero
 		int mask = _mm_movemask_ps(dst) & 0x00000007;
-		// If x or y or z are NaN, the mask is non-zero
 		return mask != 0;
 	}
 	INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(float4 v)
 	{
-		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec); // v != v
-		int mask = _mm_movemask_ps(dst) & 0x0000000F;
+		// v != v
+		__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
 		// If x or y or z or w are NaN, the mask is non-zero
+		int mask = _mm_movemask_ps(dst) & 0x0000000F;
 		return mask != 0;
 	}
 
