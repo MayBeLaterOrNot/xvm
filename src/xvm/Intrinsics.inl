@@ -116,7 +116,23 @@ namespace xvm
 		return mask != 0;
 	}
 
-		return mask == 0;
+	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV clamp(float2 v, float2 min, float2 max)
+	{
+		__m128 xmm0 = _mm_min_ps(v.vec, max.vec);
+		__m128 xmm1 = _mm_max_ps(xmm0, min.vec);
+		return xmm1;
+	}
+	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV clamp(float3 v, float3 min, float3 max)
+	{
+		__m128 xmm0 = _mm_min_ps(v.vec, max.vec);
+		__m128 xmm1 = _mm_max_ps(xmm0, min.vec);
+		return xmm1;
+	}
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV clamp(float4 v, float4 min, float4 max)
+	{
+		__m128 xmm0 = _mm_min_ps(v.vec, max.vec);
+		__m128 xmm1 = _mm_max_ps(xmm0, min.vec);
+		return xmm1;
 	}
 
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2)

@@ -129,6 +129,23 @@ TEST(float3, intrinsics_any)
 	EXPECT_TRUE(result3);
 }
 
+TEST(float3, intrinsics_clamp)
+{
+	float3 v1(2.0f);
+	float3 v2(-1.0f, 2.0f, 0.5f);
+
+	float3 result1 = clamp(v1, 0.0f, 1.0f);
+	float3 result2 = clamp(v2, 0.0f, 1.0f);
+
+	EXPECT_NEAR(result1.x, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result1.y, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result1.z, 1.0f, g_FloatEpsilon);
+
+	EXPECT_NEAR(result2.x, 0.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result2.y, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result2.z, 0.5f, g_FloatEpsilon);
+}
+
 TEST(float3, intrinsics_cross)
 {
 	float3 v1 = { 5.2f, 3.4f, 2.0f };

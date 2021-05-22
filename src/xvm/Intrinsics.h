@@ -137,6 +137,10 @@ namespace xvm
 	bool INTRINSICS_CALLCONV any(float3 v);
 	bool INTRINSICS_CALLCONV any(float4 v);
 
+	float2 INTRINSICS_CALLCONV clamp(float2 v, float2 min, float2 max);
+	float3 INTRINSICS_CALLCONV clamp(float3 v, float3 min, float3 max);
+	float4 INTRINSICS_CALLCONV clamp(float4 v, float4 min, float4 max);
+
 	float3 INTRINSICS_CALLCONV cross(float3 v1, float3 v2);
 
 	// Dot product, (also known as scalar product) of 2 vectors u and v is defined as the sum of
