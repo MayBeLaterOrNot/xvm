@@ -279,6 +279,8 @@ namespace xvm
 	// returns a row vector
 	float4 INTRINSICS_CALLCONV mul(float4 v, float4x4 m);
 	float4x4 INTRINSICS_CALLCONV mul(float4x4 m1, float4x4 m2);
+
+	float4x4 INTRINSICS_CALLCONV transpose(float4x4 m);
 }
 
 namespace xvm

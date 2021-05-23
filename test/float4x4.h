@@ -305,3 +305,34 @@ TEST(float4x4, arithmetic_matrix_scalar_divide)
 	EXPECT_NEAR(result.r3.z, 7.5f, g_FloatEpsilon);
 	EXPECT_NEAR(result.r3.w, 8.0f, g_FloatEpsilon);
 }
+
+TEST(float4x4, intrinsics_transpose)
+{
+	float4x4 m(
+		1.0f, 2.0f, 3.0f, 4.0f,
+		5.0f, 6.0f, 7.0f, 8.0f,
+		9.0f, 10.0f, 11.0f, 12.0f,
+		13.0f, 14.0f, 15.0f, 16.0f);
+	float4x4 result = transpose(m);
+
+	// row 0
+	EXPECT_NEAR(result.r0.x, 1.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r0.y, 5.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r0.z, 9.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r0.w, 13.0f, g_FloatEpsilon);
+	// row 1
+	EXPECT_NEAR(result.r1.x, 2.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r1.y, 6.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r1.z, 10.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r1.w, 14.0f, g_FloatEpsilon);
+	// row 2
+	EXPECT_NEAR(result.r2.x, 3.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r2.y, 7.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r2.z, 11.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r2.w, 15.0f, g_FloatEpsilon);
+	// row 3
+	EXPECT_NEAR(result.r3.x, 4.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r3.y, 8.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r3.z, 12.0f, g_FloatEpsilon);
+	EXPECT_NEAR(result.r3.w, 16.0f, g_FloatEpsilon);
+}

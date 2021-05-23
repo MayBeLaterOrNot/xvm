@@ -483,4 +483,11 @@ namespace xvm
 
 		return float4x4(r[0], r[1], r[2], r[3]);
 	}
+
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV transpose(float4x4 m)
+	{
+		// I worked this out on paper, is pretty interesting on how they arrived at the solution
+		_MM_TRANSPOSE4_PS(m.r[0], m.r[1], m.r[2], m.r[3]);
+		return m;
+	}
 }
