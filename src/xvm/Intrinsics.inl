@@ -25,6 +25,14 @@ namespace xvm
 		//return _mm_sub_ps(_mm_setzero_ps(), v.vec);
 		return _mm_xor_ps(v.vec, XVMMaskNegative);
 	}
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator-(float4x4 m)
+	{
+		__m128 nx = _mm_xor_ps(m.r[0], XVMMaskNegative);
+		__m128 ny = _mm_xor_ps(m.r[1], XVMMaskNegative);
+		__m128 nz = _mm_xor_ps(m.r[2], XVMMaskNegative);
+		__m128 nw = _mm_xor_ps(m.r[3], XVMMaskNegative);
+		return float4x4(nx, ny, nz, nw);
+	}
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator+(float3 v1, float3 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }

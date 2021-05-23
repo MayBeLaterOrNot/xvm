@@ -157,6 +157,7 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV operator-(float2 v);
 	float3 INTRINSICS_CALLCONV operator-(float3 v);
 	float4 INTRINSICS_CALLCONV operator-(float4 v);
+	float4x4 INTRINSICS_CALLCONV operator-(float4x4 m);
 
 	// Arithmetic operators
 	float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2);
