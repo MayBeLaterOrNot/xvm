@@ -163,18 +163,24 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV operator+(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV operator+(float4 v1, float4 v2);
+	float4x4 INTRINSICS_CALLCONV operator+(float4x4 m1, float4x4 m2);
 
 	float2 INTRINSICS_CALLCONV operator-(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV operator-(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV operator-(float4 v1, float4 v2);
+	float4x4 INTRINSICS_CALLCONV operator-(float4x4 m1, float4x4 m2);
 
 	float2 INTRINSICS_CALLCONV operator*(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV operator*(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV operator*(float4 v1, float4 v2);
+	float4x4 INTRINSICS_CALLCONV operator*(float4x4 m, float scalar);
+	float4x4 INTRINSICS_CALLCONV operator*(float scalar, float4x4 m);
+	float4x4 INTRINSICS_CALLCONV operator*(float4x4 m1, float4x4 m2);
 
 	float2 INTRINSICS_CALLCONV operator/(float2 v1, float2 v2);
 	float3 INTRINSICS_CALLCONV operator/(float3 v1, float3 v2);
 	float4 INTRINSICS_CALLCONV operator/(float4 v1, float4 v2);
+	float4x4 INTRINSICS_CALLCONV operator/(float4x4 m, float scalar);
 
 	// Using these function may cause code bloat on different compilers
 	// because the quad-word (128-bit) fits nicely inside one SIMD register.
@@ -184,18 +190,23 @@ namespace xvm
 	float2& INTRINSICS_CALLCONV operator+=(float2& v1, float2 v2);
 	float3& INTRINSICS_CALLCONV operator+=(float3& v1, float3 v2);
 	float4& INTRINSICS_CALLCONV operator+=(float4& v1, float4 v2);
+	float4x4& INTRINSICS_CALLCONV operator+=(float4x4& m1, float4x4 m2);
 
 	float2& INTRINSICS_CALLCONV operator-=(float2& v1, float2 v2);
 	float3& INTRINSICS_CALLCONV operator-=(float3& v1, float3 v2);
 	float4& INTRINSICS_CALLCONV operator-=(float4& v1, float4 v2);
+	float4x4& INTRINSICS_CALLCONV operator-=(float4x4& m1, float4x4 m2);
 
 	float2& INTRINSICS_CALLCONV operator*=(float2& v1, float2 v2);
 	float3& INTRINSICS_CALLCONV operator*=(float3& v1, float3 v2);
 	float4& INTRINSICS_CALLCONV operator*=(float4& v1, float4 v2);
+	float4x4& INTRINSICS_CALLCONV operator*=(float4x4& m, float scalar);
+	float4x4& INTRINSICS_CALLCONV operator*=(float4x4& m1, float4x4 m2);
 
 	float2& INTRINSICS_CALLCONV operator/=(float2& v1, float2 v2);
 	float3& INTRINSICS_CALLCONV operator/=(float3& v1, float3 v2);
 	float4& INTRINSICS_CALLCONV operator/=(float4& v1, float4 v2);
+	float4x4& INTRINSICS_CALLCONV operator/=(float4x4& m, float scalar);
 
 	// Intrinsics
 	float2 INTRINSICS_CALLCONV abs(float2 v);
@@ -263,6 +274,11 @@ namespace xvm
 	float2 INTRINSICS_CALLCONV sqrt(float2 v);
 	float3 INTRINSICS_CALLCONV sqrt(float3 v);
 	float4 INTRINSICS_CALLCONV sqrt(float4 v);
+
+	// Treats v as a row vector matrix [1x4] * [4x4]
+	// returns a row vector
+	float4 INTRINSICS_CALLCONV mul(float4 v, float4x4 m);
+	float4x4 INTRINSICS_CALLCONV mul(float4x4 m1, float4x4 m2);
 }
 
 namespace xvm

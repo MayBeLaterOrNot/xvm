@@ -37,34 +37,82 @@ namespace xvm
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator+(float2 v1, float2 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator+(float3 v1, float3 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV operator+(float4 v1, float4 v2) { return { _mm_add_ps(v1.vec, v2.vec) }; }
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator+(float4x4 m1, float4x4 m2)
+	{
+		__m128 r0 = _mm_add_ps(m1.r[0], m2.r[0]);
+		__m128 r1 = _mm_add_ps(m1.r[1], m2.r[1]);
+		__m128 r2 = _mm_add_ps(m1.r[2], m2.r[2]);
+		__m128 r3 = _mm_add_ps(m1.r[3], m2.r[3]);
+		return float4x4(r0, r1, r2, r3);
+	}
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator-(float2 v1, float2 v2) { return { _mm_sub_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator-(float3 v1, float3 v2) { return { _mm_sub_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV operator-(float4 v1, float4 v2) { return { _mm_sub_ps(v1.vec, v2.vec) }; }
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator-(float4x4 m1, float4x4 m2)
+	{
+		__m128 r0 = _mm_sub_ps(m1.r[0], m2.r[0]);
+		__m128 r1 = _mm_sub_ps(m1.r[1], m2.r[1]);
+		__m128 r2 = _mm_sub_ps(m1.r[2], m2.r[2]);
+		__m128 r3 = _mm_sub_ps(m1.r[3], m2.r[3]);
+		return float4x4(r0, r1, r2, r3);
+	}
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator*(float2 v1, float2 v2) { return { _mm_mul_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator*(float3 v1, float3 v2) { return { _mm_mul_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV operator*(float4 v1, float4 v2) { return { _mm_mul_ps(v1.vec, v2.vec) }; }
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator*(float4x4 m, float scalar)
+	{
+		__m128 s = _mm_set1_ps(scalar);
+		__m128 r0 = _mm_mul_ps(m.r[0], s);
+		__m128 r1 = _mm_mul_ps(m.r[1], s);
+		__m128 r2 = _mm_mul_ps(m.r[2], s);
+		__m128 r3 = _mm_mul_ps(m.r[3], s);
+		return float4x4(r0, r1, r2, r3);
+	}
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator*(float scalar, float4x4 m)
+	{
+		// scalar multiplication is commutative
+		return m * scalar;
+	}
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator*(float4x4 m1, float4x4 m2)
+	{
+		return mul(m1, m2);
+	}
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator/(float2 v1, float2 v2) { return { _mm_div_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float3 INTRINSICS_CALLCONV operator/(float3 v1, float3 v2) { return { _mm_div_ps(v1.vec, v2.vec) }; }
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV operator/(float4 v1, float4 v2) { return { _mm_div_ps(v1.vec, v2.vec) }; }
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV operator/(float4x4 m, float scalar)
+	{
+		__m128 s = _mm_set1_ps(scalar);
+		__m128 r0 = _mm_div_ps(m.r[0], s);
+		__m128 r1 = _mm_div_ps(m.r[1], s);
+		__m128 r2 = _mm_div_ps(m.r[2], s);
+		__m128 r3 = _mm_div_ps(m.r[3], s);
+		return float4x4(r0, r1, r2, r3);
+	}
 
 	INTRINSICS_INLINE float2& INTRINSICS_CALLCONV operator+=(float2& v1, float2 v2) { v1 = v1 + v2; return v1; }
 	INTRINSICS_INLINE float3& INTRINSICS_CALLCONV operator+=(float3& v1, float3 v2) { v1 = v1 + v2; return v1; }
 	INTRINSICS_INLINE float4& INTRINSICS_CALLCONV operator+=(float4& v1, float4 v2) { v1 = v1 + v2; return v1; }
+	INTRINSICS_INLINE float4x4& INTRINSICS_CALLCONV operator+=(float4x4& m1, float4x4 m2) { m1 = m1 + m2; return m1; }
 
 	INTRINSICS_INLINE float2& INTRINSICS_CALLCONV operator-=(float2& v1, float2 v2) { v1 = v1 - v2; return v1; }
 	INTRINSICS_INLINE float3& INTRINSICS_CALLCONV operator-=(float3& v1, float3 v2) { v1 = v1 - v2; return v1; }
 	INTRINSICS_INLINE float4& INTRINSICS_CALLCONV operator-=(float4& v1, float4 v2) { v1 = v1 - v2; return v1; }
+	INTRINSICS_INLINE float4x4& INTRINSICS_CALLCONV operator-=(float4x4& m1, float4x4 m2) { m1 = m1 - m2; return m1; }
 
 	INTRINSICS_INLINE float2& INTRINSICS_CALLCONV operator*=(float2& v1, float2 v2) { v1 = v1 * v2; return v1; }
 	INTRINSICS_INLINE float3& INTRINSICS_CALLCONV operator*=(float3& v1, float3 v2) { v1 = v1 * v2; return v1; }
 	INTRINSICS_INLINE float4& INTRINSICS_CALLCONV operator*=(float4& v1, float4 v2) { v1 = v1 * v2; return v1; }
+	INTRINSICS_INLINE float4x4& INTRINSICS_CALLCONV operator*=(float4x4& m, float scalar) { m = m * scalar; return m; }
+	INTRINSICS_INLINE float4x4& INTRINSICS_CALLCONV operator*=(float4x4& m1, float4x4 m2) { m1 = m1 * m2; return m1; }
 
 	INTRINSICS_INLINE float2& INTRINSICS_CALLCONV operator/=(float2& v1, float2 v2) { v1 = v1 / v2; return v1; }
 	INTRINSICS_INLINE float3& INTRINSICS_CALLCONV operator/=(float3& v1, float3 v2) { v1 = v1 / v2; return v1; }
 	INTRINSICS_INLINE float4& INTRINSICS_CALLCONV operator/=(float4& v1, float4 v2) { v1 = v1 / v2; return v1; }
+	INTRINSICS_INLINE float4x4& INTRINSICS_CALLCONV operator/=(float4x4& m, float scalar) { m = m / scalar; return m; }
 
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV abs(float2 v)
 	{
@@ -383,5 +431,56 @@ namespace xvm
 	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV sqrt(float4 v)
 	{
 		return _mm_sqrt_ps(v.vec);
+	}
+
+	INTRINSICS_INLINE float4 INTRINSICS_CALLCONV mul(float4 v, float4x4 m)
+	{
+		//					[a, b, c, d]
+		// [x, y, z, w] *	[e, f, g, h]
+		//					[i, j, k, l]
+		//					[m, n, o, p]
+		// 
+		// x' = x * a + y * e + z * i + w * m
+		// y' = x * b + y * f + z * j + w * n
+		// z' = x * c + y * g + z * k + w * o
+		// w' = x * d + y * h + z * l + w * p
+		// Splat all vector components
+		__m128 x = INTRINSICS_SHUFFLE_PS(v.vec, _MM_SHUFFLE(0, 0, 0, 0)); // [x, x, x, x]
+		__m128 y = INTRINSICS_SHUFFLE_PS(v.vec, _MM_SHUFFLE(1, 1, 1, 1)); // [y, y, y, y]
+		__m128 z = INTRINSICS_SHUFFLE_PS(v.vec, _MM_SHUFFLE(2, 2, 2, 2)); // [z, z, z, z]
+		__m128 w = INTRINSICS_SHUFFLE_PS(v.vec, _MM_SHUFFLE(3, 3, 3, 3)); // [w, w, w, w]
+
+		x = _mm_mul_ps(x, m.r[0]); // mul x by r0
+		y = _mm_mul_ps(y, m.r[1]); // mul y by r1
+		z = _mm_mul_ps(z, m.r[2]); // mul z by r2
+		w = _mm_mul_ps(w, m.r[3]); // mul w by r3
+		// sum
+		x = _mm_add_ps(x, y); // x+y
+		z = _mm_add_ps(z, w); // z+w;
+		return _mm_add_ps(x, z); // x+y+z+w
+	}
+	INTRINSICS_INLINE float4x4 INTRINSICS_CALLCONV mul(float4x4 m1, float4x4 m2)
+	{
+		__m128 r[4];
+
+		// See mul(float4, float4x4)
+		for (int i = 0; i < 4; ++i)
+		{
+			__m128 x = INTRINSICS_SHUFFLE_PS(m1.r[i], _MM_SHUFFLE(0, 0, 0, 0)); // [x, x, x, x]
+			__m128 y = INTRINSICS_SHUFFLE_PS(m1.r[i], _MM_SHUFFLE(1, 1, 1, 1)); // [y, y, y, y]
+			__m128 z = INTRINSICS_SHUFFLE_PS(m1.r[i], _MM_SHUFFLE(2, 2, 2, 2)); // [z, z, z, z]
+			__m128 w = INTRINSICS_SHUFFLE_PS(m1.r[i], _MM_SHUFFLE(3, 3, 3, 3)); // [w, w, w, w]
+
+			x = _mm_mul_ps(x, m2.r[0]); // mul x by r0
+			y = _mm_mul_ps(y, m2.r[1]); // mul y by r1
+			z = _mm_mul_ps(z, m2.r[2]); // mul z by r2
+			w = _mm_mul_ps(w, m2.r[3]); // mul w by r3
+			// sum
+			x = _mm_add_ps(x, y); // x+y
+			z = _mm_add_ps(z, w); // z+w;
+			r[i] = _mm_add_ps(x, z); // x+y+z+w
+		}
+
+		return float4x4(r[0], r[1], r[2], r[3]);
 	}
 }
