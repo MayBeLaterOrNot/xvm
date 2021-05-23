@@ -2,6 +2,14 @@
 
 namespace xvm
 {
+	INTRINSICS_INLINE float4x4::float4x4()
+	{
+		r[0] = XVMIdentityR0;
+		r[1] = XVMIdentityR1;
+		r[2] = XVMIdentityR2;
+		r[3] = XVMIdentityR3;
+	}
+
 	INTRINSICS_INLINE float2 INTRINSICS_CALLCONV operator-(float2 v)
 	{
 		//return _mm_sub_ps(_mm_setzero_ps(), v.vec);

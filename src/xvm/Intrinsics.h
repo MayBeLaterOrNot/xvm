@@ -81,6 +81,78 @@ namespace xvm
 		};
 	};
 
+	struct float4x4
+	{
+		float4x4();
+		float4x4(
+			__m128 r0,
+			__m128 r1,
+			__m128 r2,
+			__m128 r3)
+		{
+			r[0] = r0;
+			r[1] = r1;
+			r[2] = r2;
+			r[3] = r3;
+		}
+		float4x4(
+			float m00, float m01, float m02, float m03,
+			float m10, float m11, float m12, float m13,
+			float m20, float m21, float m22, float m23,
+			float m30, float m31, float m32, float m33)
+		{
+			r[0] = _mm_set_ps(m03, m02, m01, m00);
+			r[1] = _mm_set_ps(m13, m12, m11, m10);
+			r[2] = _mm_set_ps(m23, m22, m21, m20);
+			r[3] = _mm_set_ps(m33, m32, m31, m30);
+		}
+		float4x4(float floats[16]) : float4x4(
+			floats[0], floats[1], floats[2], floats[3],
+			floats[4], floats[5], floats[6], floats[7], 
+			floats[8], floats[9], floats[10], floats[11], 
+			floats[12], floats[13], floats[14], floats[15]) { }
+
+		union
+		{
+			__m128 r[4];
+			struct
+			{
+				union
+				{
+					__m128 vec;
+					scalar_swizzle<0> x;
+					scalar_swizzle<1> y;
+					scalar_swizzle<2> z;
+					scalar_swizzle<3> w;
+				} r0;
+				union
+				{
+					__m128 vec;
+					scalar_swizzle<0> x;
+					scalar_swizzle<1> y;
+					scalar_swizzle<2> z;
+					scalar_swizzle<3> w;
+				} r1;
+				union
+				{
+					__m128 vec;
+					scalar_swizzle<0> x;
+					scalar_swizzle<1> y;
+					scalar_swizzle<2> z;
+					scalar_swizzle<3> w;
+				} r2;
+				union
+				{
+					__m128 vec;
+					scalar_swizzle<0> x;
+					scalar_swizzle<1> y;
+					scalar_swizzle<2> z;
+					scalar_swizzle<3> w;
+				} r3;
+			};
+		};
+	};
+
 	// Negate operator
 	float2 INTRINSICS_CALLCONV operator-(float2 v);
 	float3 INTRINSICS_CALLCONV operator-(float3 v);
@@ -252,6 +324,11 @@ namespace xvm
 
 	XVM_GLOBALCONST FP32		XVMFP32Infinity			= { 0x7F800000 };
 	XVM_GLOBALCONST FP32		XVMFP32NegativeInfinity = { 0xFF800000 };
+
+	XVM_GLOBALCONST XVM_FP32	XVMIdentityR0			= { { { 1.0f, 0.0f, 0.0f, 0.0f } } };
+	XVM_GLOBALCONST XVM_FP32	XVMIdentityR1			= { { { 0.0f, 1.0f, 0.0f, 0.0f } } };
+	XVM_GLOBALCONST XVM_FP32	XVMIdentityR2			= { { { 0.0f, 0.0f, 1.0f, 0.0f } } };
+	XVM_GLOBALCONST XVM_FP32	XVMIdentityR3			= { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
 
 	XVM_GLOBALCONST XVM_I32		XVMMaskAbsoluteValue	= { { { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff } } };
 	XVM_GLOBALCONST XVM_UI32	XVMMaskNegative			= { { { 0x80000000, 0x80000000, 0x80000000, 0x80000000 } } };
