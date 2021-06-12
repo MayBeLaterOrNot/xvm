@@ -4,12 +4,12 @@
 #include <intrin.h>
 #include <xmmintrin.h>
 
-#define INTRINSICS_INLINE                inline
+#define INTRINSICS_INLINE				 inline
 
-#define INTRINSICS_CALLCONV              __vectorcall
+#define INTRINSICS_CALLCONV				 __vectorcall
 
 // _MM_SHUFFLE(3, 2, 1, 0) -> [x, y, z, w]
-#define INTRINSICS_SWIZZLE_PS(v, c)      _mm_shuffle_ps(v, v, c)
+#define INTRINSICS_SWIZZLE_PS(v, c)		 _mm_shuffle_ps(v, v, c)
 
 // { v1[fp0], v1[fp1], v2[fp2], v2[fp3] }
 #define INTRINSICS_SHUFFLE_PS(v1, v2, c) _mm_shuffle_ps(v1, v2, c)
@@ -23,113 +23,110 @@ namespace xvm
 template<int I>
 struct scalar_swizzle
 {
-    operator float() const
-    {
-        return fp32[I];
-    }
+	operator float() const { return fp32[I]; }
 
 private:
-    union
-    {
-        __m128 vec;
-        float fp32[4];
-    };
+	union
+	{
+		__m128 vec;
+		float  fp32[4];
+	};
 };
 
 struct Vec2
 {
-    Vec2()
-        : vec(_mm_setzero_ps())
-    {
-    }
-    Vec2(__m128 a)
-        : vec(a)
-    {
-    }
-    Vec2(float x, float y)
-        : vec(_mm_set_ps(0.0f, 0.0f, y, x))
-    {
-    }
-    Vec2(float scalar)
-        : Vec2(scalar, scalar)
-    {
-    }
-    Vec2(float floats[2])
-        : Vec2(floats[0], floats[1])
-    {
-    }
+	Vec2()
+		: vec(_mm_setzero_ps())
+	{
+	}
+	Vec2(__m128 a)
+		: vec(a)
+	{
+	}
+	Vec2(float x, float y)
+		: vec(_mm_set_ps(0.0f, 0.0f, y, x))
+	{
+	}
+	Vec2(float scalar)
+		: Vec2(scalar, scalar)
+	{
+	}
+	Vec2(float floats[2])
+		: Vec2(floats[0], floats[1])
+	{
+	}
 
-    union
-    {
-        __m128 vec;
-        scalar_swizzle<0> x;
-        scalar_swizzle<1> y;
-    };
+	union
+	{
+		__m128			  vec;
+		scalar_swizzle<0> x;
+		scalar_swizzle<1> y;
+	};
 };
 
 struct Vec3
 {
-    Vec3()
-        : vec(_mm_setzero_ps())
-    {
-    }
-    Vec3(__m128 a)
-        : vec(a)
-    {
-    }
-    Vec3(float x, float y, float z)
-        : vec(_mm_set_ps(0.0f, z, y, x))
-    {
-    }
-    Vec3(float scalar)
-        : Vec3(scalar, scalar, scalar)
-    {
-    }
-    Vec3(float floats[3])
-        : Vec3(floats[0], floats[1], floats[2])
-    {
-    }
+	Vec3()
+		: vec(_mm_setzero_ps())
+	{
+	}
+	Vec3(__m128 a)
+		: vec(a)
+	{
+	}
+	Vec3(float x, float y, float z)
+		: vec(_mm_set_ps(0.0f, z, y, x))
+	{
+	}
+	Vec3(float scalar)
+		: Vec3(scalar, scalar, scalar)
+	{
+	}
+	Vec3(float floats[3])
+		: Vec3(floats[0], floats[1], floats[2])
+	{
+	}
 
-    union
-    {
-        __m128 vec;
-        scalar_swizzle<0> x;
-        scalar_swizzle<1> y;
-        scalar_swizzle<2> z;
-    };
+	union
+	{
+		__m128			  vec;
+		scalar_swizzle<0> x;
+		scalar_swizzle<1> y;
+		scalar_swizzle<2> z;
+	};
 };
 
 struct Vec4
 {
-    Vec4()
-        : vec(_mm_setzero_ps())
-    {
-    }
-    Vec4(__m128 a)
-        : vec(a)
-    {
-    }
-    Vec4(float x, float y, float z, float w)
-        : vec(_mm_set_ps(w, z, y, x))
-    {
-    }
-    Vec4(float scalar)
-        : Vec4(scalar, scalar, scalar, scalar)
-    {
-    }
-    Vec4(float floats[4])
-        : Vec4(floats[0], floats[1], floats[2], floats[3])
-    {
-    }
+	Vec4()
+		: vec(_mm_setzero_ps())
+	{
+	}
+	Vec4(__m128 a)
+		: vec(a)
+	{
+	}
+	Vec4(float x, float y, float z, float w)
+		: vec(_mm_set_ps(w, z, y, x))
+	{
+	}
+	Vec4(float scalar)
+		: Vec4(scalar, scalar, scalar, scalar)
+	{
+	}
+	Vec4(float floats[4])
+		: Vec4(floats[0], floats[1], floats[2], floats[3])
+	{
+	}
 
-    union
-    {
-        __m128 vec;
-        scalar_swizzle<0> x;
-        scalar_swizzle<1> y;
-        scalar_swizzle<2> z;
-        scalar_swizzle<3> w;
-    };
+	union
+	{
+		__m128			  vec;
+		scalar_swizzle<0> x;
+		scalar_swizzle<1> y;
+		scalar_swizzle<2> z;
+		scalar_swizzle<3> w;
+	};
 };
 
 // q = s + ia + jb + kc			 s, a, b, c ∈ R
@@ -140,42 +137,42 @@ struct Vec4
 // i×j = k, j×k = i, k×i = j cross product of 2 unit cartesian vectors
 struct Quaternion
 {
-    Quaternion()
-        : vec(_mm_setzero_ps())
-    {
-    }
-    Quaternion(__m128 a)
-        : vec(a)
-    {
-    }
-    Quaternion(float x, float y, float z, float w)
-        : vec(_mm_set_ps(w, z, y, x))
-    {
-    }
+	Quaternion()
+		: vec(_mm_setzero_ps())
+	{
+	}
+	Quaternion(__m128 a)
+		: vec(a)
+	{
+	}
+	Quaternion(float x, float y, float z, float w)
+		: vec(_mm_set_ps(w, z, y, x))
+	{
+	}
 
-    union
-    {
-        __m128 vec;
-        // vector part
-        scalar_swizzle<0> x;
-        scalar_swizzle<1> y;
-        scalar_swizzle<2> z;
-        // real part
-        scalar_swizzle<3> w;
-    };
+	union
+	{
+		__m128 vec;
+		// vector part
+		scalar_swizzle<0> x;
+		scalar_swizzle<1> y;
+		scalar_swizzle<2> z;
+		// real part
+		scalar_swizzle<3> w;
+	};
 };
 
 struct Matrix4x4
 {
-    Matrix4x4();
-    Matrix4x4(__m128 r0, __m128 r1, __m128 r2, __m128 r3)
-    {
-        r[0] = r0;
-        r[1] = r1;
-        r[2] = r2;
-        r[3] = r3;
-    }
-    // clang-format off
+	Matrix4x4();
+	Matrix4x4(__m128 r0, __m128 r1, __m128 r2, __m128 r3)
+	{
+		r[0] = r0;
+		r[1] = r1;
+		r[2] = r2;
+		r[3] = r3;
+	}
+	// clang-format off
     Matrix4x4(
         float m00, float m01, float m02, float m03,
         float m10, float m11, float m12, float m13,
@@ -195,82 +192,82 @@ struct Matrix4x4
             floats[12], floats[13], floats[14], floats[15])
     {
     }
-    // clang-format on
+	// clang-format on
 
-    union
-    {
-        __m128 r[4];
-        struct
-        {
-            union
-            {
-                __m128 vec;
-                scalar_swizzle<0> x;
-                scalar_swizzle<1> y;
-                scalar_swizzle<2> z;
-                scalar_swizzle<3> w;
-            } r0;
-            union
-            {
-                __m128 vec;
-                scalar_swizzle<0> x;
-                scalar_swizzle<1> y;
-                scalar_swizzle<2> z;
-                scalar_swizzle<3> w;
-            } r1;
-            union
-            {
-                __m128 vec;
-                scalar_swizzle<0> x;
-                scalar_swizzle<1> y;
-                scalar_swizzle<2> z;
-                scalar_swizzle<3> w;
-            } r2;
-            union
-            {
-                __m128 vec;
-                scalar_swizzle<0> x;
-                scalar_swizzle<1> y;
-                scalar_swizzle<2> z;
-                scalar_swizzle<3> w;
-            } r3;
-        };
-    };
+	union
+	{
+		__m128 r[4];
+		struct
+		{
+			union
+			{
+				__m128			  vec;
+				scalar_swizzle<0> x;
+				scalar_swizzle<1> y;
+				scalar_swizzle<2> z;
+				scalar_swizzle<3> w;
+			} r0;
+			union
+			{
+				__m128			  vec;
+				scalar_swizzle<0> x;
+				scalar_swizzle<1> y;
+				scalar_swizzle<2> z;
+				scalar_swizzle<3> w;
+			} r1;
+			union
+			{
+				__m128			  vec;
+				scalar_swizzle<0> x;
+				scalar_swizzle<1> y;
+				scalar_swizzle<2> z;
+				scalar_swizzle<3> w;
+			} r2;
+			union
+			{
+				__m128			  vec;
+				scalar_swizzle<0> x;
+				scalar_swizzle<1> y;
+				scalar_swizzle<2> z;
+				scalar_swizzle<3> w;
+			} r3;
+		};
+	};
 };
 
 // Negate operator
-Vec2 INTRINSICS_CALLCONV operator-(Vec2 v);
-Vec3 INTRINSICS_CALLCONV operator-(Vec3 v);
-Vec4 INTRINSICS_CALLCONV operator-(Vec4 v);
+Vec2 INTRINSICS_CALLCONV	  operator-(Vec2 v);
+Vec3 INTRINSICS_CALLCONV	  operator-(Vec3 v);
+Vec4 INTRINSICS_CALLCONV	  operator-(Vec4 v);
 Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m);
 
 // Arithmetic operators
-Vec2 INTRINSICS_CALLCONV operator+(Vec2 v1, Vec2 v2);
-Vec3 INTRINSICS_CALLCONV operator+(Vec3 v1, Vec3 v2);
-Vec4 INTRINSICS_CALLCONV operator+(Vec4 v1, Vec4 v2);
+Vec2 INTRINSICS_CALLCONV	   operator+(Vec2 v1, Vec2 v2);
+Vec3 INTRINSICS_CALLCONV	   operator+(Vec3 v1, Vec3 v2);
+Vec4 INTRINSICS_CALLCONV	   operator+(Vec4 v1, Vec4 v2);
 Quaternion INTRINSICS_CALLCONV operator+(Quaternion q1, Quaternion q2);
-Matrix4x4 INTRINSICS_CALLCONV operator+(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 INTRINSICS_CALLCONV  operator+(Matrix4x4 m1, Matrix4x4 m2);
 
-Vec2 INTRINSICS_CALLCONV operator-(Vec2 v1, Vec2 v2);
-Vec3 INTRINSICS_CALLCONV operator-(Vec3 v1, Vec3 v2);
-Vec4 INTRINSICS_CALLCONV operator-(Vec4 v1, Vec4 v2);
+Vec2 INTRINSICS_CALLCONV	   operator-(Vec2 v1, Vec2 v2);
+Vec3 INTRINSICS_CALLCONV	   operator-(Vec3 v1, Vec3 v2);
+Vec4 INTRINSICS_CALLCONV	   operator-(Vec4 v1, Vec4 v2);
 Quaternion INTRINSICS_CALLCONV operator-(Quaternion q1, Quaternion q2);
-Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 INTRINSICS_CALLCONV  operator-(Matrix4x4 m1, Matrix4x4 m2);
 
-Vec2 INTRINSICS_CALLCONV operator*(Vec2 v1, Vec2 v2);
-Vec3 INTRINSICS_CALLCONV operator*(Vec3 v1, Vec3 v2);
-Vec4 INTRINSICS_CALLCONV operator*(Vec4 v1, Vec4 v2);
+Vec2 INTRINSICS_CALLCONV	   operator*(Vec2 v1, Vec2 v2);
+Vec3 INTRINSICS_CALLCONV	   operator*(Vec3 v1, Vec3 v2);
+Vec4 INTRINSICS_CALLCONV	   operator*(Vec4 v1, Vec4 v2);
 Quaternion INTRINSICS_CALLCONV operator*(Quaternion q1,
-                                         Quaternion q2); // Quaternion product
+										 Quaternion q2); // Quaternion product
 Quaternion INTRINSICS_CALLCONV operator*(Quaternion q, float scalar);
 Quaternion INTRINSICS_CALLCONV operator*(float scalar, Quaternion q);
-Matrix4x4 INTRINSICS_CALLCONV operator*(Matrix4x4 m, float scalar);
-Matrix4x4 INTRINSICS_CALLCONV operator*(float scalar, Matrix4x4 m);
-Matrix4x4 INTRINSICS_CALLCONV operator*(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 INTRINSICS_CALLCONV  operator*(Matrix4x4 m, float scalar);
+Matrix4x4 INTRINSICS_CALLCONV  operator*(float scalar, Matrix4x4 m);
+Matrix4x4 INTRINSICS_CALLCONV  operator*(Matrix4x4 m1, Matrix4x4 m2);
 
-Vec2 INTRINSICS_CALLCONV operator/(Vec2 v1, Vec2 v2);
-Vec3 INTRINSICS_CALLCONV operator/(Vec3 v1, Vec3 v2);
-Vec4 INTRINSICS_CALLCONV operator/(Vec4 v1, Vec4 v2);
+Vec2 INTRINSICS_CALLCONV	  operator/(Vec2 v1, Vec2 v2);
+Vec3 INTRINSICS_CALLCONV	  operator/(Vec3 v1, Vec3 v2);
+Vec4 INTRINSICS_CALLCONV	  operator/(Vec4 v1, Vec4 v2);
 Matrix4x4 INTRINSICS_CALLCONV operator/(Matrix4x4 m, float scalar);
 
 // Using these function may cause code bloat on different compilers
@@ -281,29 +278,29 @@ Matrix4x4 INTRINSICS_CALLCONV operator/(Matrix4x4 m, float scalar);
 // When combining multiple vector operations the "returned by value" interface
 // allows the compiler to optimize these loads and stores easily by minimizing
 // SIMD to FPU or memory transfers.
-Vec2& INTRINSICS_CALLCONV operator+=(Vec2& v1, Vec2 v2);
-Vec3& INTRINSICS_CALLCONV operator+=(Vec3& v1, Vec3 v2);
-Vec4& INTRINSICS_CALLCONV operator+=(Vec4& v1, Vec4 v2);
+Vec2& INTRINSICS_CALLCONV		operator+=(Vec2& v1, Vec2 v2);
+Vec3& INTRINSICS_CALLCONV		operator+=(Vec3& v1, Vec3 v2);
+Vec4& INTRINSICS_CALLCONV		operator+=(Vec4& v1, Vec4 v2);
 Quaternion& INTRINSICS_CALLCONV operator+=(Quaternion& q1, Quaternion q2);
-Matrix4x4& INTRINSICS_CALLCONV operator+=(Matrix4x4& m1, Matrix4x4 m2);
+Matrix4x4& INTRINSICS_CALLCONV	operator+=(Matrix4x4& m1, Matrix4x4 m2);
 
-Vec2& INTRINSICS_CALLCONV operator-=(Vec2& v1, Vec2 v2);
-Vec3& INTRINSICS_CALLCONV operator-=(Vec3& v1, Vec3 v2);
-Vec4& INTRINSICS_CALLCONV operator-=(Vec4& v1, Vec4 v2);
+Vec2& INTRINSICS_CALLCONV		operator-=(Vec2& v1, Vec2 v2);
+Vec3& INTRINSICS_CALLCONV		operator-=(Vec3& v1, Vec3 v2);
+Vec4& INTRINSICS_CALLCONV		operator-=(Vec4& v1, Vec4 v2);
 Quaternion& INTRINSICS_CALLCONV operator-=(Quaternion& q1, Quaternion q2);
-Matrix4x4& INTRINSICS_CALLCONV operator-=(Matrix4x4& m1, Matrix4x4 m2);
+Matrix4x4& INTRINSICS_CALLCONV	operator-=(Matrix4x4& m1, Matrix4x4 m2);
 
-Vec2& INTRINSICS_CALLCONV operator*=(Vec2& v1, Vec2 v2);
-Vec3& INTRINSICS_CALLCONV operator*=(Vec3& v1, Vec3 v2);
-Vec4& INTRINSICS_CALLCONV operator*=(Vec4& v1, Vec4 v2);
+Vec2& INTRINSICS_CALLCONV		operator*=(Vec2& v1, Vec2 v2);
+Vec3& INTRINSICS_CALLCONV		operator*=(Vec3& v1, Vec3 v2);
+Vec4& INTRINSICS_CALLCONV		operator*=(Vec4& v1, Vec4 v2);
 Quaternion& INTRINSICS_CALLCONV operator*=(Quaternion& q1, Quaternion q2);
 Quaternion& INTRINSICS_CALLCONV operator*=(Quaternion& q, float scalar);
-Matrix4x4& INTRINSICS_CALLCONV operator*=(Matrix4x4& m, float scalar);
-Matrix4x4& INTRINSICS_CALLCONV operator*=(Matrix4x4& m1, Matrix4x4 m2);
+Matrix4x4& INTRINSICS_CALLCONV	operator*=(Matrix4x4& m, float scalar);
+Matrix4x4& INTRINSICS_CALLCONV	operator*=(Matrix4x4& m1, Matrix4x4 m2);
 
-Vec2& INTRINSICS_CALLCONV operator/=(Vec2& v1, Vec2 v2);
-Vec3& INTRINSICS_CALLCONV operator/=(Vec3& v1, Vec3 v2);
-Vec4& INTRINSICS_CALLCONV operator/=(Vec4& v1, Vec4 v2);
+Vec2& INTRINSICS_CALLCONV	   operator/=(Vec2& v1, Vec2 v2);
+Vec3& INTRINSICS_CALLCONV	   operator/=(Vec3& v1, Vec3 v2);
+Vec4& INTRINSICS_CALLCONV	   operator/=(Vec4& v1, Vec4 v2);
 Matrix4x4& INTRINSICS_CALLCONV operator/=(Matrix4x4& m, float scalar);
 
 // Intrinsics
@@ -372,9 +369,9 @@ Vec2 INTRINSICS_CALLCONV min(Vec2 v1, Vec2 v2);
 Vec3 INTRINSICS_CALLCONV min(Vec3 v1, Vec3 v2);
 Vec4 INTRINSICS_CALLCONV min(Vec4 v1, Vec4 v2);
 
-Vec2 INTRINSICS_CALLCONV normalize(Vec2 v);
-Vec3 INTRINSICS_CALLCONV normalize(Vec3 v);
-Vec4 INTRINSICS_CALLCONV normalize(Vec4 v);
+Vec2 INTRINSICS_CALLCONV	   normalize(Vec2 v);
+Vec3 INTRINSICS_CALLCONV	   normalize(Vec3 v);
+Vec4 INTRINSICS_CALLCONV	   normalize(Vec4 v);
 Quaternion INTRINSICS_CALLCONV normalize(Quaternion q);
 
 Vec2 INTRINSICS_CALLCONV sqrt(Vec2 v);
@@ -383,7 +380,7 @@ Vec4 INTRINSICS_CALLCONV sqrt(Vec4 v);
 
 // Treats v as a row vector matrix [1x4] * [4x4]
 // returns a [1x4] row vector
-Vec4 INTRINSICS_CALLCONV mul(Vec4 v, Matrix4x4 m);
+Vec4 INTRINSICS_CALLCONV	  mul(Vec4 v, Matrix4x4 m);
 Matrix4x4 INTRINSICS_CALLCONV mul(Matrix4x4 m1, Matrix4x4 m2);
 
 Matrix4x4 INTRINSICS_CALLCONV transpose(Matrix4x4 m);
@@ -406,101 +403,71 @@ namespace xvm
 
 union FP32
 {
-    uint32_t u;
-    float f;
-    struct
-    {
-        uint32_t Mantissa : 23;
-        uint32_t Exponent : 8;
-        uint32_t Sign     : 1;
-    };
+	uint32_t u;
+	float	 f;
+	struct
+	{
+		uint32_t Mantissa : 23;
+		uint32_t Exponent : 8;
+		uint32_t Sign	  : 1;
+	};
 };
 
 __declspec(align(16)) struct XVM_FP32
 {
-    union
-    {
-        float fp32[4];
-        __m128 v;
-    };
+	union
+	{
+		float  fp32[4];
+		__m128 v;
+	};
 
-    inline operator __m128() const noexcept
-    {
-        return v;
-    }
-    inline operator const float*() const noexcept
-    {
-        return fp32;
-    }
-    inline operator __m128i() const noexcept
-    {
-        return _mm_castps_si128(v);
-    }
-    inline operator __m128d() const noexcept
-    {
-        return _mm_castps_pd(v);
-    }
+	inline operator __m128() const noexcept { return v; }
+	inline operator const float*() const noexcept { return fp32; }
+	inline operator __m128i() const noexcept { return _mm_castps_si128(v); }
+	inline operator __m128d() const noexcept { return _mm_castps_pd(v); }
 };
 
 __declspec(align(16)) struct XVM_I32
 {
-    union
-    {
-        int32_t i32[4];
-        __m128 v;
-    };
+	union
+	{
+		int32_t i32[4];
+		__m128	v;
+	};
 
-    inline operator __m128() const
-    {
-        return v;
-    }
-    inline operator __m128i() const
-    {
-        return _mm_castps_si128(v);
-    }
-    inline operator __m128d() const
-    {
-        return _mm_castps_pd(v);
-    }
+	inline operator __m128() const { return v; }
+	inline operator __m128i() const { return _mm_castps_si128(v); }
+	inline operator __m128d() const { return _mm_castps_pd(v); }
 };
 
 __declspec(align(16)) struct XVM_UI32
 {
-    union
-    {
-        uint32_t i32[4];
-        __m128 v;
-    };
+	union
+	{
+		uint32_t i32[4];
+		__m128	 v;
+	};
 
-    inline operator __m128() const
-    {
-        return v;
-    }
-    inline operator __m128i() const
-    {
-        return _mm_castps_si128(v);
-    }
-    inline operator __m128d() const
-    {
-        return _mm_castps_pd(v);
-    }
+	inline operator __m128() const { return v; }
+	inline operator __m128i() const { return _mm_castps_si128(v); }
+	inline operator __m128d() const { return _mm_castps_pd(v); }
 };
 
-XVM_GLOBALCONST FP32 XVMFP32Infinity         = {0x7F800000};
-XVM_GLOBALCONST FP32 XVMFP32NegativeInfinity = {0xFF800000};
+XVM_GLOBALCONST FP32 XVMFP32Infinity		 = { 0x7F800000 };
+XVM_GLOBALCONST FP32 XVMFP32NegativeInfinity = { 0xFF800000 };
 
-XVM_GLOBALCONST XVM_FP32 XVMIdentityR0       = {{{1.0f, 0.0f, 0.0f, 0.0f}}};
-XVM_GLOBALCONST XVM_FP32 XVMIdentityR1       = {{{0.0f, 1.0f, 0.0f, 0.0f}}};
-XVM_GLOBALCONST XVM_FP32 XVMIdentityR2       = {{{0.0f, 0.0f, 1.0f, 0.0f}}};
-XVM_GLOBALCONST XVM_FP32 XVMIdentityR3       = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+XVM_GLOBALCONST XVM_FP32 XVMIdentityR0 = { { { 1.0f, 0.0f, 0.0f, 0.0f } } };
+XVM_GLOBALCONST XVM_FP32 XVMIdentityR1 = { { { 0.0f, 1.0f, 0.0f, 0.0f } } };
+XVM_GLOBALCONST XVM_FP32 XVMIdentityR2 = { { { 0.0f, 0.0f, 1.0f, 0.0f } } };
+XVM_GLOBALCONST XVM_FP32 XVMIdentityR3 = { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
 
-XVM_GLOBALCONST XVM_I32 XVMMaskAbsoluteValue = {{{0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff}}};
-XVM_GLOBALCONST XVM_UI32 XVMMaskNegative     = {{{0x80000000, 0x80000000, 0x80000000, 0x80000000}}};
-XVM_GLOBALCONST XVM_UI32 XVMMaskXYZNegative  = {{{0x80000000, 0x80000000, 0x80000000, 0x00000000}}};
-XVM_GLOBALCONST XVM_UI32 XVMInfinity         = {{{0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000}}};
-XVM_GLOBALCONST XVM_UI32 XVMNegativeInfinity = {{{0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000}}};
-XVM_GLOBALCONST XVM_I32 XVMNaNS              = {{{0x7F800001, 0x7F800001, 0x7F800001, 0x7F800001}}};
-XVM_GLOBALCONST XVM_I32 XVMNaNQ              = {{{0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000}}};
+XVM_GLOBALCONST XVM_I32	 XVMMaskAbsoluteValue = { { { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff } } };
+XVM_GLOBALCONST XVM_UI32 XVMMaskNegative	  = { { { 0x80000000, 0x80000000, 0x80000000, 0x80000000 } } };
+XVM_GLOBALCONST XVM_UI32 XVMMaskXYZNegative	  = { { { 0x80000000, 0x80000000, 0x80000000, 0x00000000 } } };
+XVM_GLOBALCONST XVM_UI32 XVMInfinity		  = { { { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 } } };
+XVM_GLOBALCONST XVM_UI32 XVMNegativeInfinity  = { { { 0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000 } } };
+XVM_GLOBALCONST XVM_I32	 XVMNaNS			  = { { { 0x7F800001, 0x7F800001, 0x7F800001, 0x7F800001 } } };
+XVM_GLOBALCONST XVM_I32	 XVMNaNQ			  = { { { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 } } };
 
 #undef XVM_GLOBALCONST
 } // namespace xvm
