@@ -7,7 +7,8 @@ using namespace xvm;
 
 static constexpr float g_FloatEpsilon = 1e-2f;
 
-#include "float2.h"
-#include "float3.h"
-#include "float4.h"
-#include "float4x4.h"
+#include "Vec2.h"
+#include "Vec3.h"
+#include "Vec4.h"
+#include "Quaternion.h"
+#include "Matrix4x4.h"
