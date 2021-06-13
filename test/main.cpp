@@ -4,6 +4,7 @@
 using namespace xvm;
 
 #include <limits>
+#include <numbers>
 
 static constexpr float g_FloatEpsilon = 1e-2f;
 

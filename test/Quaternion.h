@@ -89,3 +89,41 @@ TEST(Quaternion, intrinsics_normalize)
 	EXPECT_NEAR(result.z, 0.571f, g_FloatEpsilon);
 	EXPECT_NEAR(result.w, 0.142f, g_FloatEpsilon);
 }
+
+TEST(Quaternion, intrinsics_mul)
+{
+	constexpr float theta = std::numbers::pi_v<float> / 4.0f;
+	float			v	  = 1.0f / std::sqrt(2.0f);
+
+	Quaternion quaternion = Quaternion(std::sin(theta) * v, 0.0f, std::sin(theta) * v, std::cos(theta));
+
+	{
+		// Refer to Eq (7.9) in book
+		Quaternion p = Quaternion(2.0f, 0.0f, 0.0f, 0.0f);
+
+		Quaternion result = quaternion * p;
+
+		EXPECT_NEAR(result.w, -1.0f, g_FloatEpsilon);
+		EXPECT_NEAR(result.x, std::sqrt(2.0f), g_FloatEpsilon);
+		EXPECT_NEAR(result.y, 1.0f, g_FloatEpsilon);
+		EXPECT_NEAR(result.z, 0.0f, g_FloatEpsilon);
+
+		result = quaternion * p * conjugate(quaternion);
+
+		// Should become a pure quaternion with the vector part being rotated from p
+		EXPECT_NEAR(result.w, 0.0f, g_FloatEpsilon);
+		EXPECT_NEAR(result.x, 1.0f, g_FloatEpsilon);
+		EXPECT_NEAR(result.y, std::sqrt(2.0f), g_FloatEpsilon);
+		EXPECT_NEAR(result.z, 1.0f, g_FloatEpsilon);
+	}
+
+	{
+		Vec3 position = Vec3(2.0f, 0.0f, 0.0f);
+
+		Vec3 result = mul(position, quaternion);
+
+		EXPECT_NEAR(result.x, 1.0f, g_FloatEpsilon);
+		EXPECT_NEAR(result.y, std::sqrt(2.0f), g_FloatEpsilon);
+		EXPECT_NEAR(result.z, 1.0f, g_FloatEpsilon);
+	}
+}

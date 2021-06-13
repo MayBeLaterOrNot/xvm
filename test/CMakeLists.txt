@@ -28,6 +28,8 @@ target_link_libraries(
     ${PROJECTNAME}
     gtest_main)
 
+set_property(TARGET ${PROJECTNAME} PROPERTY CXX_STANDARD 20)
+
 include_directories("${CMAKE_SOURCE_DIR}/src")
 
 include(GoogleTest)

@@ -1,5 +1,34 @@
 ﻿namespace xvm
 {
+// Internal xvm intrinsics
+INTRINSICS_INLINE __m128 _xvm_mm_cross_ps(__m128 v1, __m128 v2)
+{
+	/*
+	 * http://threadlocalmutex.com/?p=8
+	 * (v1 x v2).x = v1.y * v2.z - v1.z * v2.y;
+	 * (v1 x v2).y = v1.z * v2.x - v1.x * v2.z;
+	 * (v1 x v2).z = v1.x * v2.y - v1.y * v2.x;
+	 *
+	 * moving the 3rd operation to top yields this
+	 *
+	 * (v1 x v2).z = v1.x * v2.y - v1.y * v2.x;
+	 * (v1 x v2).x = v1.y * v2.z - v1.z * v2.y;
+	 * (v1 x v2).y = v1.z * v2.x - v1.x * v2.z;
+	 *
+	 * we can perform swizzling here
+	 *
+	 * (v1 x v2).zxy = v1 * v2.yzx - v1.yzx * v2;
+	 *
+	 * swizzle zxy on both sides gives us the cross product again
+	 *
+	 * (v1 x v2) = (v1 * v2.yzx - v1.yzx * v2).yzx;
+	 */
+	__m128 v1_yzx = INTRINSICS_SWIZZLE_PS(v1, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 v2_yzx = INTRINSICS_SWIZZLE_PS(v2, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 cross  = _mm_sub_ps(_mm_mul_ps(v1, v2_yzx), _mm_mul_ps(v1_yzx, v2));
+	return INTRINSICS_SWIZZLE_PS(cross, _MM_SHUFFLE(3, 0, 2, 1));
+}
+
 INTRINSICS_INLINE Matrix4x4::Matrix4x4()
 {
 	r[0] = XVMIdentityR0;
@@ -47,19 +76,19 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m)
 
 INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator+(Vec2 v1, Vec2 v2)
 {
-	return { _mm_add_ps(v1.vec, v2.vec) };
+	return _mm_add_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV operator+(Vec3 v1, Vec3 v2)
 {
-	return { _mm_add_ps(v1.vec, v2.vec) };
+	return _mm_add_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV operator+(Vec4 v1, Vec4 v2)
 {
-	return { _mm_add_ps(v1.vec, v2.vec) };
+	return _mm_add_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Quaternion INTRINSICS_CALLCONV operator+(Quaternion q1, Quaternion q2)
 {
-	return { _mm_add_ps(q1.vec, q2.vec) };
+	return _mm_add_ps(q1.vec, q2.vec);
 }
 INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator+(Matrix4x4 m1, Matrix4x4 m2)
 {
@@ -72,19 +101,19 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator+(Matrix4x4 m1, Matrix4x
 
 INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator-(Vec2 v1, Vec2 v2)
 {
-	return { _mm_sub_ps(v1.vec, v2.vec) };
+	return _mm_sub_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV operator-(Vec3 v1, Vec3 v2)
 {
-	return { _mm_sub_ps(v1.vec, v2.vec) };
+	return _mm_sub_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV operator-(Vec4 v1, Vec4 v2)
 {
-	return { _mm_sub_ps(v1.vec, v2.vec) };
+	return _mm_sub_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Quaternion INTRINSICS_CALLCONV operator-(Quaternion q1, Quaternion q2)
 {
-	return { _mm_sub_ps(q1.vec, q2.vec) };
+	return _mm_sub_ps(q1.vec, q2.vec);
 }
 INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m1, Matrix4x4 m2)
 {
@@ -97,56 +126,60 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m1, Matrix4x
 
 INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator*(Vec2 v1, Vec2 v2)
 {
-	return { _mm_mul_ps(v1.vec, v2.vec) };
+	return _mm_mul_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV operator*(Vec3 v1, Vec3 v2)
 {
-	return { _mm_mul_ps(v1.vec, v2.vec) };
+	return _mm_mul_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV operator*(Vec4 v1, Vec4 v2)
 {
-	return { _mm_mul_ps(v1.vec, v2.vec) };
+	return _mm_mul_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Quaternion INTRINSICS_CALLCONV operator*(Quaternion q1, Quaternion q2)
 {
 #if 0
-		// [s_a, a] [s_b, b] = [s_a * s_b − a · b, s_a * b + s_b * a + a×b]
-		// where s_ is the real part, a,b is vector part
+	// Working the multiplication rule out of paper was "fun"...
+	// https://1drv.ms/u/s!AoqfVczS5xmN-uZ1d1QcVOSpMfxb8g?e=6Oh6gX
+	// Here's the link for the worked out multiplication, all you need to know is
+	// the multiplication rule for ijk :]
+	// [s_a, a] [s_b, b] = [s_a * s_b − a · b, s_a * b + s_b * a + a×b]
+	// where s_ is the real part, a,b is vector part
 
-		// Splat q1.w
-		__m128 s_a = INTRINSICS_SWIZZLE_PS(q1.vec, _MM_SHUFFLE(3, 3, 3, 3));
-		// Splat q2.w
-		__m128 s_b = INTRINSICS_SWIZZLE_PS(q2.vec, _MM_SHUFFLE(3, 3, 3, 3));
+	// Splat q1.w
+	__m128 s_a = INTRINSICS_SWIZZLE_PS(q1.vec, _MM_SHUFFLE(3, 3, 3, 3));
+	// Splat q2.w
+	__m128 s_b = INTRINSICS_SWIZZLE_PS(q2.vec, _MM_SHUFFLE(3, 3, 3, 3));
 
-		// a o b, copy-pasta from dot(Vec3, Vec3) to keep consistency
-		__m128 dot = _mm_mul_ps(q1.vec, q2.vec);
-		__m128 shuff = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 1)); // { y, z, z, z }
-		dot = _mm_add_ss(dot, shuff); // { x+y, ?, ?, ? }
-		shuff = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 2)); // { z, z, z, z }
-		dot = _mm_add_ss(dot, shuff); // { x+y+z, ?, ?, ? }
-		__m128 aob = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
+	// a o b, copy-pasta from dot(Vec3, Vec3) to keep consistency
+	__m128 dot	 = _mm_mul_ps(q1.vec, q2.vec);
+	__m128 shuff = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 1)); // { y, z, z, z }
+	dot			 = _mm_add_ss(dot, shuff);								// { x+y, ?, ?, ? }
+	shuff		 = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(2, 2, 2, 2)); // { z, z, z, z }
+	dot			 = _mm_add_ss(dot, shuff);								// { x+y+z, ?, ?, ? }
+	__m128 aob	 = INTRINSICS_SWIZZLE_PS(dot, _MM_SHUFFLE(0, 0, 0, 0)); // splat fp0
 
-		// s_a * s_b − a · b
-		// real part
-		__m128 real = _mm_sub_ps(_mm_mul_ps(s_a, s_b), aob);
+	// s_a * s_b − a · b
+	// real part
+	__m128 real = _mm_sub_ps(_mm_mul_ps(s_a, s_b), aob);
 
-		// a x b, copy-pasta from cross(Vec3, Vec3) to keep consistency
-		__m128 v1_yzx = INTRINSICS_SWIZZLE_PS(q1.vec, _MM_SHUFFLE(3, 0, 2, 1));
-		__m128 v2_yzx = INTRINSICS_SWIZZLE_PS(q2.vec, _MM_SHUFFLE(3, 0, 2, 1));
-		__m128 cross = _mm_sub_ps(_mm_mul_ps(q1.vec, v2_yzx), _mm_mul_ps(v1_yzx, q2.vec));
-		__m128 axb = INTRINSICS_SWIZZLE_PS(cross, _MM_SHUFFLE(3, 0, 2, 1));
+	// a x b, copy-pasta from cross(Vec3, Vec3) to keep consistency
+	__m128 v1_yzx = INTRINSICS_SWIZZLE_PS(q1.vec, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 v2_yzx = INTRINSICS_SWIZZLE_PS(q2.vec, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 cross  = _mm_sub_ps(_mm_mul_ps(q1.vec, v2_yzx), _mm_mul_ps(v1_yzx, q2.vec));
+	__m128 axb	  = INTRINSICS_SWIZZLE_PS(cross, _MM_SHUFFLE(3, 0, 2, 1));
 
-		// vector part
-		__m128 s_ab = _mm_mul_ps(s_a, q2.vec);
-		__m128 s_ba = _mm_mul_ps(s_b, q1.vec);
-		__m128 vect = _mm_add_ps(s_ab, s_ba);
-		vect = _mm_add_ps(vect, axb);
+	// vector part
+	__m128 s_ab = _mm_mul_ps(s_a, q2.vec);
+	__m128 s_ba = _mm_mul_ps(s_b, q1.vec);
+	__m128 vect = _mm_add_ps(s_ab, s_ba);
+	vect		= _mm_add_ps(vect, axb);
 
-		real = INTRINSICS_SHUFFLE_PS(real, vect, _MM_SHUFFLE(2, 2, 0, 0)); // { w, w, z, z }
+	real = INTRINSICS_SHUFFLE_PS(real, vect, _MM_SHUFFLE(2, 2, 0, 0)); // { w, w, z, z }
 
-		vect = INTRINSICS_SWIZZLE_PS(vect, _MM_SHUFFLE(2, 2, 1, 0)); // { x, y, z, z }
+	vect = INTRINSICS_SWIZZLE_PS(vect, _MM_SHUFFLE(2, 2, 1, 0)); // { x, y, z, z }
 
-		return INTRINSICS_SHUFFLE_PS(vect, real, _MM_SHUFFLE(0, 2, 1, 0)); // { x, y, z, w }
+	return INTRINSICS_SHUFFLE_PS(vect, real, _MM_SHUFFLE(0, 2, 1, 0)); // { x, y, z, w }
 #endif
 	// Matrix implementation, refer to Eq 5.14, Section 5.17
 	// [q1.w -q1.x -q1.y -q1.z] [q2.w]
@@ -199,7 +232,7 @@ INTRINSICS_INLINE Quaternion INTRINSICS_CALLCONV operator*(Quaternion q, float s
 	// λ = [λ, 0]
 	// λq = [λ, 0][s, v]
 	// = [λs, λv]
-	return { _mm_mul_ps(q.vec, _mm_set1_ps(scalar)) };
+	return _mm_mul_ps(q.vec, _mm_set1_ps(scalar));
 }
 INTRINSICS_INLINE Quaternion INTRINSICS_CALLCONV operator*(float scalar, Quaternion q)
 {
@@ -227,15 +260,15 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator*(Matrix4x4 m1, Matrix4x
 
 INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator/(Vec2 v1, Vec2 v2)
 {
-	return { _mm_div_ps(v1.vec, v2.vec) };
+	return _mm_div_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV operator/(Vec3 v1, Vec3 v2)
 {
-	return { _mm_div_ps(v1.vec, v2.vec) };
+	return _mm_div_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV operator/(Vec4 v1, Vec4 v2)
 {
-	return { _mm_div_ps(v1.vec, v2.vec) };
+	return _mm_div_ps(v1.vec, v2.vec);
 }
 INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator/(Matrix4x4 m, float scalar)
 {
@@ -374,51 +407,39 @@ INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV abs(Vec4 v)
 
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(Vec2 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If all is non-zero, the mask is exactly 0x00000003
-	int mask = _mm_movemask_ps(dst) & 0x00000003;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x00000003;	  // If all is non-zero, the mask is exactly 0x00000003
 	return mask == 0x00000003;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(Vec3 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If all is non-zero, the mask is exactly 0x00000007
-	int mask = _mm_movemask_ps(dst) & 0x00000007;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x00000007;	  // If all is non-zero, the mask is exactly 0x00000007
 	return mask == 0x00000007;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV all(Vec4 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If all is non-zero, the mask is exactly 0x0000000F
-	int mask = _mm_movemask_ps(dst) & 0x0000000F;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x0000000F;	  // If all is non-zero, the mask is exactly 0x0000000F
 	return mask == 0x0000000F;
 }
 
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(Vec2 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If x or y are non-zero, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x00000003;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x00000003;	  // If x or y are non-zero, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(Vec3 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If x or y or z are non-zero, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x00000007;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x00000007;	  // If x or y or z are non-zero, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV any(Vec4 v)
 {
-	// v != 0
-	__m128 dst = _mm_cmpneq_ps(v.vec, _mm_setzero_ps());
-	// If x or y or z or w are non-zero, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x0000000F;
+	__m128 cmp	= _mm_cmpneq_ps(v.vec, _mm_setzero_ps()); // v != 0
+	int	   mask = _mm_movemask_ps(cmp) & 0x0000000F;	  // If x or y or z or w are non-zero, the mask is non-zero
 	return mask != 0;
 }
 
@@ -443,30 +464,7 @@ INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV clamp(Vec4 v, Vec4 min, Vec4 max)
 
 INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV cross(Vec3 v1, Vec3 v2)
 {
-	/*
-	 * http://threadlocalmutex.com/?p=8
-	 * (v1 x v2).x = v1.y * v2.z - v1.z * v2.y;
-	 * (v1 x v2).y = v1.z * v2.x - v1.x * v2.z;
-	 * (v1 x v2).z = v1.x * v2.y - v1.y * v2.x;
-	 *
-	 * moving the 3rd operation to top yields this
-	 *
-	 * (v1 x v2).z = v1.x * v2.y - v1.y * v2.x;
-	 * (v1 x v2).x = v1.y * v2.z - v1.z * v2.y;
-	 * (v1 x v2).y = v1.z * v2.x - v1.x * v2.z;
-	 *
-	 * we can perform swizzling here
-	 *
-	 * (v1 x v2).zxy = v1 * v2.yzx - v1.yzx * v2;
-	 *
-	 * swizzle zxy on both sides gives us the cross product again
-	 *
-	 * (v1 x v2) = (v1 * v2.yzx - v1.yzx * v2).yzx;
-	 */
-	__m128 v1_yzx = INTRINSICS_SWIZZLE_PS(v1.vec, _MM_SHUFFLE(3, 0, 2, 1));
-	__m128 v2_yzx = INTRINSICS_SWIZZLE_PS(v2.vec, _MM_SHUFFLE(3, 0, 2, 1));
-	__m128 cross  = _mm_sub_ps(_mm_mul_ps(v1.vec, v2_yzx), _mm_mul_ps(v1_yzx, v2.vec));
-	return INTRINSICS_SWIZZLE_PS(cross, _MM_SHUFFLE(3, 0, 2, 1));
+	return _xvm_mm_cross_ps(v1.vec, v2.vec);
 }
 
 INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV dot(Vec2 v1, Vec2 v2)
@@ -506,88 +504,64 @@ INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV dot(Quaternion q1, Quaternion q2)
 
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(Vec2 v)
 {
-	// Mask off the sign bit
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v != infinity
-	__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
-	// If x, y is finite, the mask is exactly 0x00000003
-	int mask = _mm_movemask_ps(cmp) & 0x00000003;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit
+	cmp		   = _mm_cmpneq_ps(cmp, XVMInfinity);		  // v != infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x00000003;		  // If x, y is finite, the mask is exactly 0x00000003
 	return mask == 0x00000003;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(Vec3 v)
 {
-	// Mask off the sign bit
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v != infinity
-	__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
-	// If x, y, z is finite, the mask is exactly 0x00000007
-	int mask = _mm_movemask_ps(cmp) & 0x00000007;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit
+	cmp		   = _mm_cmpneq_ps(cmp, XVMInfinity);		  // v != infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x00000007;		  // If x, y, z is finite, the mask is exactly 0x00000007
 	return mask == 0x00000007;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isfinite(Vec4 v)
 {
-	// Mask off the sign bit
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v != infinity
-	__m128 cmp = _mm_cmpneq_ps(and, XVMInfinity);
-	// If x, y, z, w is finite, the mask is exactly 0x0000000F
-	int mask = _mm_movemask_ps(cmp) & 0x0000000F;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit
+	cmp		   = _mm_cmpneq_ps(cmp, XVMInfinity);		  // v != infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x0000000F;		  // If x, y, z, w is finite, the mask is exactly 0x0000000F
 	return mask == 0x0000000F;
 }
 
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(Vec2 v)
 {
-	// Mask off the sign bit then compare to infinity
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v == infinity
-	__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
-	// If x or y is infinity, the mask is non-zero
-	int mask = _mm_movemask_ps(cmp) & 0x00000003;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit then compare to infinity
+	cmp		   = _mm_cmpeq_ps(cmp, XVMInfinity);		  // v == infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x00000003;		  // If x or y is infinity, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(Vec3 v)
 {
-	// Mask off the sign bit then compare to infinity
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v == infinity
-	__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
-	// If x or y or z is infinity, the mask is non-zero
-	int mask = _mm_movemask_ps(cmp) & 0x00000007;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit then compare to infinity
+	cmp		   = _mm_cmpeq_ps(cmp, XVMInfinity);		  // v == infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x00000007;		  // If x or y or z is infinity, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isinf(Vec4 v)
 {
-	// Mask off the sign bit then compare to infinity
-	__m128 and = _mm_and_ps(v.vec, XVMMaskAbsoluteValue);
-	// v == infinity
-	__m128 cmp = _mm_cmpeq_ps(and, XVMInfinity);
-	// If x or y or z or w is infinity, the mask is non-zero
-	int mask = _mm_movemask_ps(cmp) & 0x0000000F;
+	__m128 cmp = _mm_and_ps(v.vec, XVMMaskAbsoluteValue); // Mask off the sign bit then compare to infinity
+	cmp		   = _mm_cmpeq_ps(cmp, XVMInfinity);		  // v == infinity
+	int mask   = _mm_movemask_ps(cmp) & 0x0000000F;		  // If x or y or z or w is infinity, the mask is non-zero
 	return mask != 0;
 }
 
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(Vec2 v)
 {
-	// v != v
-	__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
-	// If x or y are nan, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x00000003;
+	__m128 dst	= _mm_cmpneq_ps(v.vec, v.vec);		 // v != v
+	int	   mask = _mm_movemask_ps(dst) & 0x00000003; // If x or y are nan, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(Vec3 v)
 {
-	// v != v
-	__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
-	// If x or y or z are nan, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x00000007;
+	__m128 dst	= _mm_cmpneq_ps(v.vec, v.vec);		 // v != v
+	int	   mask = _mm_movemask_ps(dst) & 0x00000007; // If x or y or z are nan, the mask is non-zero
 	return mask != 0;
 }
 INTRINSICS_INLINE bool INTRINSICS_CALLCONV isnan(Vec4 v)
 {
-	// v != v
-	__m128 dst = _mm_cmpneq_ps(v.vec, v.vec);
-	// If x or y or z or w are NaN, the mask is non-zero
-	int mask = _mm_movemask_ps(dst) & 0x0000000F;
+	__m128 dst	= _mm_cmpneq_ps(v.vec, v.vec);		 // v != v
+	int	   mask = _mm_movemask_ps(dst) & 0x0000000F; // If x or y or z or w are NaN, the mask is non-zero
 	return mask != 0;
 }
 
@@ -694,6 +668,18 @@ INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV sqrt(Vec4 v)
 	return _mm_sqrt_ps(v.vec);
 }
 
+INTRINSICS_INLINE Vec3 INTRINSICS_CALLCONV mul(Vec3 v, Quaternion q)
+{
+	// https://blog.molecular-matters.com/2013/05/24/a-faster-quaternion-vector-multiplication/
+
+	__m128 t	  = _xvm_mm_cross_ps(q.vec, v.vec);
+	t			  = _mm_add_ps(t, t);
+	__m128 mul	  = _mm_mul_ps(INTRINSICS_SWIZZLE_PS(q.vec, _MM_SHUFFLE(3, 3, 3, 3)), t);
+	__m128 vprime = _mm_add_ps(v.vec, mul);
+	t			  = _xvm_mm_cross_ps(q.vec, t);
+	vprime		  = _mm_add_ps(vprime, t);
+	return vprime;
+}
 INTRINSICS_INLINE Vec4 INTRINSICS_CALLCONV mul(Vec4 v, Matrix4x4 m)
 {
 	//				[a b c d]
@@ -769,7 +755,7 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV translation(float x, float y, fl
 
 INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV scale(float x, float y, float z)
 {
-	// row-major, actually it doesnt matter lol, transpose is same
+	// row-major, col-major transpose is same
 	// [x 0 0 0]
 	// [0 y 0 0]
 	// [0 0 z 0]

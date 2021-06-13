@@ -134,7 +134,18 @@ struct Vec4
 // i^2 = j^2 = k^2 = ijk = −1
 // ij = k, jk = i, ki = j
 // ji = −k, kj = −i, ik = −j
+// ij = -ji = k
+// jk = -kj = i
+// ki = -ik = j
 // i×j = k, j×k = i, k×i = j cross product of 2 unit cartesian vectors
+
+// When a unit quaternion takes the form
+// q = [cos theta/2, sin theta/2 * v^hat]
+// and a pure quaternion storing a vector to be rotated takes the form
+// p = [0, p]
+// the pure quaternion
+// p' = q*p*q^-1
+// stores the rotated vector p'
 struct Quaternion
 {
 	Quaternion()
@@ -173,25 +184,25 @@ struct Matrix4x4
 		r[3] = r3;
 	}
 	// clang-format off
-    Matrix4x4(
-        float m00, float m01, float m02, float m03,
-        float m10, float m11, float m12, float m13,
-        float m20, float m21, float m22, float m23,
-        float m30, float m31, float m32, float m33)
-    {
-        r[0] = _mm_set_ps(m03, m02, m01, m00);
-        r[1] = _mm_set_ps(m13, m12, m11, m10);
-        r[2] = _mm_set_ps(m23, m22, m21, m20);
-        r[3] = _mm_set_ps(m33, m32, m31, m30);
-    }
-    Matrix4x4(float floats[16])
-        : Matrix4x4(
-            floats[0], floats[1], floats[2], floats[3],
-            floats[4], floats[5], floats[6], floats[7],
-            floats[8], floats[9], floats[10], floats[11],
-            floats[12], floats[13], floats[14], floats[15])
-    {
-    }
+	Matrix4x4(
+		float m00, float m01, float m02, float m03,
+		float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23,
+		float m30, float m31, float m32, float m33)
+	{
+		r[0] = _mm_set_ps(m03, m02, m01, m00);
+		r[1] = _mm_set_ps(m13, m12, m11, m10);
+		r[2] = _mm_set_ps(m23, m22, m21, m20);
+		r[3] = _mm_set_ps(m33, m32, m31, m30);
+	}
+	Matrix4x4(float floats[16])
+		: Matrix4x4(
+			floats[0], floats[1], floats[2], floats[3],
+			floats[4], floats[5], floats[6], floats[7],
+			floats[8], floats[9], floats[10], floats[11],
+			floats[12], floats[13], floats[14], floats[15])
+	{
+	}
 	// clang-format on
 
 	union
@@ -378,6 +389,7 @@ Vec2 INTRINSICS_CALLCONV sqrt(Vec2 v);
 Vec3 INTRINSICS_CALLCONV sqrt(Vec3 v);
 Vec4 INTRINSICS_CALLCONV sqrt(Vec4 v);
 
+Vec3 INTRINSICS_CALLCONV mul(Vec3 v, Quaternion q);
 // Treats v as a row vector matrix [1x4] * [4x4]
 // returns a [1x4] row vector
 Vec4 INTRINSICS_CALLCONV	  mul(Vec4 v, Matrix4x4 m);
@@ -435,22 +447,22 @@ __declspec(align(16)) struct XVM_I32
 		__m128	v;
 	};
 
-	inline operator __m128() const { return v; }
-	inline operator __m128i() const { return _mm_castps_si128(v); }
-	inline operator __m128d() const { return _mm_castps_pd(v); }
+	inline operator __m128() const noexcept { return v; }
+	inline operator __m128i() const noexcept { return _mm_castps_si128(v); }
+	inline operator __m128d() const noexcept { return _mm_castps_pd(v); }
 };
 
 __declspec(align(16)) struct XVM_UI32
 {
 	union
 	{
-		uint32_t i32[4];
+		uint32_t ui32[4];
 		__m128	 v;
 	};
 
-	inline operator __m128() const { return v; }
-	inline operator __m128i() const { return _mm_castps_si128(v); }
-	inline operator __m128d() const { return _mm_castps_pd(v); }
+	inline operator __m128() const noexcept { return v; }
+	inline operator __m128i() const noexcept { return _mm_castps_si128(v); }
+	inline operator __m128d() const noexcept { return _mm_castps_pd(v); }
 };
 
 XVM_GLOBALCONST FP32 XVMFP32Infinity		 = { 0x7F800000 };
@@ -468,6 +480,10 @@ XVM_GLOBALCONST XVM_UI32 XVMInfinity		  = { { { 0x7F800000, 0x7F800000, 0x7F8000
 XVM_GLOBALCONST XVM_UI32 XVMNegativeInfinity  = { { { 0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000 } } };
 XVM_GLOBALCONST XVM_I32	 XVMNaNS			  = { { { 0x7F800001, 0x7F800001, 0x7F800001, 0x7F800001 } } };
 XVM_GLOBALCONST XVM_I32	 XVMNaNQ			  = { { { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 } } };
+
+XVM_GLOBALCONST XVM_FP32 XVMQuaternionUnitI = { { { 1.0f, 0.0f, 0.0f, 0.0f } } };
+XVM_GLOBALCONST XVM_FP32 XVMQuaternionUnitJ = { { { 0.0f, 1.0f, 0.0f, 0.0f } } };
+XVM_GLOBALCONST XVM_FP32 XVMQuaternionUnitK = { { { 0.0f, 0.0f, 1.0f, 0.0f } } };
 
 #undef XVM_GLOBALCONST
 } // namespace xvm
