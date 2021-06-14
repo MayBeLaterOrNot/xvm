@@ -57,12 +57,7 @@ struct Vec2
 	{
 	}
 
-	union
-	{
-		__m128			  vec;
-		scalar_swizzle<0> x;
-		scalar_swizzle<1> y;
-	};
+	__m128 vec;
 };
 
 struct Vec3
@@ -254,7 +249,7 @@ Vec4 INTRINSICS_CALLCONV	  operator-(Vec4 v);
 Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m);
 
 // Arithmetic operators
-Vec2 INTRINSICS_CALLCONV	   operator+(Vec2 v1, Vec2 v2);
+Vec2 INTRINSICS_CALLCONV	   operator+(const Vec2& v1, const Vec2& v2);
 Vec3 INTRINSICS_CALLCONV	   operator+(Vec3 v1, Vec3 v2);
 Vec4 INTRINSICS_CALLCONV	   operator+(Vec4 v1, Vec4 v2);
 Quaternion INTRINSICS_CALLCONV operator+(Quaternion q1, Quaternion q2);

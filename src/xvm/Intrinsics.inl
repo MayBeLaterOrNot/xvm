@@ -74,7 +74,7 @@ INTRINSICS_INLINE Matrix4x4 INTRINSICS_CALLCONV operator-(Matrix4x4 m)
 	return Matrix4x4(nx, ny, nz, nw);
 }
 
-INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator+(Vec2 v1, Vec2 v2)
+INTRINSICS_INLINE Vec2 INTRINSICS_CALLCONV operator+(const Vec2& v1, const Vec2& v2)
 {
 	return _mm_add_ps(v1.vec, v2.vec);
 }
